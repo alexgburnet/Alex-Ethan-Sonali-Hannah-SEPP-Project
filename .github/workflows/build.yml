@@ -23,6 +23,7 @@ jobs:
         with:
           node-version: '16' # Adjust based on your project's Node.js version
           cache: 'npm'
+          cache-dependency-path: Frontend/package-lock.json
 
       # Step 3: Change directory to the Frontend folder
       - name: Navigate to Frontend
