@@ -17,10 +17,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Traverse into Frontend directory
-      - name: Move directory
-        run: cd Frontend
-
       # Step 2: Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -28,10 +24,17 @@ jobs:
           node-version: '16' # Adjust based on your project's Node.js version
           cache: 'npm'
 
-      # Step 3: Install dependencies
+      # Step 3: Change directory to the Frontend folder
+      - name: Navigate to Frontend
+        working-directory: Frontend
+        run: echo "Moved to Frontend folder"
+
+      # Step 4: Install dependencies
       - name: Install dependencies
+        working-directory: Frontend
         run: npm install
 
-      # Step 4: Build the project
+      # Step 5: Build the project
       - name: Build the project
+        working-directory: Frontend
         run: npm run build
