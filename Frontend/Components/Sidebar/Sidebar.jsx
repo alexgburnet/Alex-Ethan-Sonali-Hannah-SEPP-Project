@@ -6,7 +6,7 @@ function Sidebar () {
     return (
         <>
             <div className="sidebar">
-                <h2>Side bar</h2>
+                <p>Side bar</p>
             </div>
         </>
     )

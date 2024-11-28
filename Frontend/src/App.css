@@ -19,6 +19,6 @@ body {
 .page-container {
   display: flex;
   position: relative;
-  height: 100%;
+  height: 85vh;
   width: 100%;
 }
