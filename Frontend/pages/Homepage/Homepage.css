@@ -1,6 +1,15 @@
 .homepage {
     display: flex;
+    flex-direction: row;
     position: relative;
     height: 100%;
     width: 100%;
+}
+
+.item-container {
+    display: flex;
+    flex-grow: 1;
+    overflow: auto;
+    background-color: grey;
+    border: 2px solid black;
 }
