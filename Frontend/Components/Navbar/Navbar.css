@@ -1,8 +1,49 @@
 header {
     width: 100vw;
     height: 15vh;
-    background-color: grey;
+    background-color: rgb(44, 62, 80);
     margin: 0;
-    padding: 0;
-    border: 2px solid black;
+    padding: 0 20px;
+    border-bottom: 3px solid rgb(22, 45, 68);
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* This centers children vertically */
+    top: 0;
+    left: 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #ecf0f1;
+    font-family: 'Arial', sans-serif;
+    font-size: 45px;
+    font-weight: bold;
+    text-align: center;
+    flex-grow: 1;
+}
+.SiteNameHeader{
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    text-decoration: none;
+}
+.CartIcon{
+    display: flex;
+    flex-grow: 0.1;
+    align-items: center;
+    text-decoration: none;
+}
+
+header svg{
+    width: 32px;
+    height:32px;
+    margin: 0 auto;
+}
+
+a svg {
+    color: inherit;
+}
+  
+a:visited svg {
+    color: inherit;
 }
