@@ -1,0 +1,39 @@
+.product-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.product-container {
+    display: flex;
+    flex: 4;
+    flex-direction: row;
+    border: 2px solid black;
+}
+
+.image-container {
+    display: flex;
+    flex: 2;
+    border: 2px solid black;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.product-info-container {
+    display: flex;
+    flex: 1;
+    border: 2px solid black;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.similar-products-container {
+    display: flex;
+    flex: 1;
+    border: 2px solid black;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
