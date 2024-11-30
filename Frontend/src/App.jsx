@@ -13,7 +13,7 @@ import "./App.css"
 function App() {
 
   return (
-    <div>
+    <div className='screen'>
       <Navbar/>
       <div className='page-container'>
         <Routes>
