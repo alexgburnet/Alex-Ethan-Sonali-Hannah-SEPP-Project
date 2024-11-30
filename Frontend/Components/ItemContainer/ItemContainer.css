@@ -1,0 +1,8 @@
+.item-container {
+    display: flex;
+    flex: 9;
+    overflow: auto;
+    justify-content: center;
+    text-align: center;
+    margin: 20px;
+}
