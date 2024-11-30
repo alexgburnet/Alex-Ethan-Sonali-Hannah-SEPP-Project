@@ -1,8 +1,8 @@
 .sidebar {
     width: 8%;
     height: 100%;
-    background-color: grey;
-    border: 2px solid black;
+    background-color: rgb(79, 154, 224);
+    border-right: 1px solid rgb(64, 126, 184);
     display: flex;
     flex-direction: column;
     align-items: center;
