@@ -1,11 +1,10 @@
 .sidebar {
-    width: 8%;
-    height: 100%;
-    background-color: rgb(79, 154, 224);
-    border-right: 1px solid rgb(64, 126, 184);
+    flex: 1;
+    border-right: 3px solid rgb(234, 234, 234);
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin: 20px;
 }
 .homeIcon{
     display: flex;
@@ -14,13 +13,7 @@
     height: auto;
     width: 100%;
 }
-.sidebar a{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 70%;
-    max-width: 60px;
-}
+
 
 svg{
     margin-top: 30%;
@@ -33,7 +26,6 @@ a svg{
     margin-top: 42.85%;
     flex: 1;
     margin: 20px;
-    border-right: 2px solid rgb(234, 234, 234);
     align-items: center;
     justify-content: center;
     text-align: center;
