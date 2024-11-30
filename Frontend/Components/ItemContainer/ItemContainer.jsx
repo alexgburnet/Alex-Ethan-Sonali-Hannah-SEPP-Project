@@ -1,4 +1,4 @@
-import './itemContainer.css';
+import './ItemContainer.css';
 
 function ItemContainer() {
   return (
