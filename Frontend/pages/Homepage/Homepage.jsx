@@ -1,5 +1,5 @@
 import Sidebar from "../../Components/Sidebar/Sidebar.jsx";
-import ItemContainer from "../../components/ItemContainer/ItemContainer.jsx";
+import ItemContainer from "../../Components/ItemContainer/ItemContainer.jsx";
 
 import './Homepage.css'
 
