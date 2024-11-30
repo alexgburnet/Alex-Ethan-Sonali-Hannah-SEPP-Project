@@ -1,31 +1,38 @@
 .sidebar {
     flex: 1;
-    border-right: 3px solid rgb(234, 234, 234);
+    border-right: 3px solid rgb(214, 214, 214);
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 20px;
+    padding: 20px;
 }
 .homeIcon{
-    display: flex;
+    display:flex;
     justify-content: center;
     align-items: center;
     height: auto;
     width: 100%;
 }
 
-
+a{
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    max-width: 60px;
+    height:auto;
+}
 svg{
-    margin-top: 30%;
+    display:flex;
+    margin-top: 3vh;
     height: auto;
-    width: 70%;
+    width: auto;
     max-width: 60px;
 }
 a svg{
-    width: 100%;
-    margin-top: 42.85%;
-    flex: 1;
-    margin: 20px;
+    width: auto;
+    margin-top: 4.2vh;
+    height: auto;
     align-items: center;
     justify-content: center;
     text-align: center;
