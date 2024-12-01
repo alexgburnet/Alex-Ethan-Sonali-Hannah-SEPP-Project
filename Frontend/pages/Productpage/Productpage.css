@@ -11,13 +11,13 @@
 
 .product-container {
     display: flex;
-    flex: 4;
+    flex: 3;
     flex-direction: row;
 }
 
 .image-container {
     display: flex;
-    flex: 2;
+    flex: 1;
     align-items: center;
     justify-content: center;
     text-align: center;
@@ -39,4 +39,8 @@
     justify-content: center;
     text-align: center;
     border-top: 2px solid rgb(234, 234, 234);
+}
+
+.image-gallery {
+    padding: 30px;
 }
