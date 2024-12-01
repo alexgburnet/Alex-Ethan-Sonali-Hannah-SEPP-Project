@@ -13,20 +13,30 @@ header {
     border-radius: 20px;
 }
 
+.link {
+    display: flex;
+    flex: 1; /* Prevent the link from shrinking */
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    width: auto; /* Ensure it adapts to the content */
+}
+
 h1 {
+    white-space: nowrap; /* Prevent line breaks inside the text */
     color: #ecf0f1;
     font-family: 'Arial', sans-serif;
     font-size: 45px;
     font-weight: bold;
     text-align: center;
-    flex-grow: 1;
 }
-.SiteNameHeader{
+.SiteNameHeader {
     display: flex;
-    flex-grow: 1;
+    flex-grow: 1; /* Don't allow it to grow excessively */
     align-items: center;
     justify-content: center;
     text-decoration: none;
+    width: auto; /* Ensure the div only takes up as much space as needed */
 }
 .CartIcon{
     display: flex;
