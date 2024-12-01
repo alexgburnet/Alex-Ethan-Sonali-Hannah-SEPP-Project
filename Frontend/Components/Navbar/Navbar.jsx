@@ -5,8 +5,8 @@ function Navbar () {
   return (
     <header>
       <div className="SiteNameHeader">
-        <Link to="/" >
-          <h1> Site Name</h1>
+        <Link to="/" className="link">
+          <h1> Student Smart Homes</h1>
         </Link>
       </div>
       {/*cart icon*/}
