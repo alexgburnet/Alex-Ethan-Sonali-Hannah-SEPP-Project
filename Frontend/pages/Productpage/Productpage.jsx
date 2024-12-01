@@ -34,7 +34,22 @@ function ProductPage() {
             </div>
 
             <div className='product-info-container'>
-                <p>product info</p>
+                <h1>Title</h1>
+
+                <hr></hr>
+
+                <div className='quantity-container'>
+                    <h3>Quantity</h3>
+                    <input type='number' min='1' max='10' defaultValue='1'></input>
+                </div>
+
+                <hr></hr>
+
+                <button className='add-to-cart'>Add to cart</button>
+
+                <p>Description</p>
+
+
             </div>
 
         </div>
