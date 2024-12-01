@@ -1,9 +1,9 @@
 import './ItemContainer.css';
 
-function ItemContainer() {
+function ItemContainer({ searchQuery }) {
   return (
     <div className="item-container">
-      <p>Items</p>
+      <p>{ searchQuery ? searchQuery : "Type something and search to display search query" }</p>
     </div>
   );
 }
