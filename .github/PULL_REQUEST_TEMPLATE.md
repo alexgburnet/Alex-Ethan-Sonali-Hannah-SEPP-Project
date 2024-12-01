@@ -11,5 +11,7 @@
 - [ ] Bug Fix
 - [ ] Optimization
 - [ ] Documentation Update
+- [ ] Adding Testing
+- [ ] Adding CI/CD
 
 ## Description
