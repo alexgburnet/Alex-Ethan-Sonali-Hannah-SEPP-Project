@@ -1,14 +1,26 @@
 import './Searchbar.css';
 
-function Searchbar() {
+function Searchbar({ onSearch }) {
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            onSearch(e.target.value);
+        }
+    }
+
+    const handleSearchClick = () => {
+        onSearch(document.querySelector('.searchbar').value);
+    }
+
   return (
     <div className='searchbar-container'>
       <input
         type='text'
         className='searchbar'
         placeholder='Search...'
+        onChange={handleKeyPress}
       />
-      <div className='search-button-container'>
+      <div className='search-button-container' onClick={handleSearchClick}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
