@@ -9,9 +9,9 @@ import './Homepage.css'
 function Homepage () {
 
     const [searchQuery, setSearchQuery] = useState('');
-    const [searchResult, setSearchResult] = useState('');
 
     const handleSearch = (query) => {
+        console.log(query);
         setSearchQuery(query);
     }
 
@@ -19,8 +19,8 @@ function Homepage () {
         <div className="homepage">
             <Sidebar />
             <div className="items-search">
-                <Searchbar setSearchQuery={setSearchQuery} onSearch={handleSearch}/>
-                <ItemContainer searchQuery={searchResult}/>
+                <Searchbar onSearch={handleSearch}/>
+                <ItemContainer searchQuery={searchQuery}/>
             </div>
         </div>
     )
