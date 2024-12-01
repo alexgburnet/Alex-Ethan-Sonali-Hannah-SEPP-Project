@@ -1,8 +1,8 @@
 ## What part of the codebase does this PR concern
 
-- [] Frontend
-- [] Backend
-- [] Database
+- [ ] Frontend
+- [ ] Backend
+- [ ] Database
 
 ## What type of PR is this? (check all applicable)
 
