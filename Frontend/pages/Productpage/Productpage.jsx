@@ -3,21 +3,12 @@ import ImageGallery from 'react-image-gallery';
 import './Productpage.css';
 import 'react-image-gallery/styles/css/image-gallery.css';
 
-function ProductPage() {
+function ProductPage(props) {
 
     const images = [
         {
-          original: "https://picsum.photos/id/1018/1000/600/",
-          thumbnail: "https://picsum.photos/id/1018/250/150/",
-        },
-        {
-          original: "https://picsum.photos/id/1015/1000/600/",
-          thumbnail: "https://picsum.photos/id/1015/250/150/",
-        },
-        {
-          original: "https://picsum.photos/id/1019/1000/600/",
-          thumbnail: "https://picsum.photos/id/1019/250/150/",
-        },
+          original: props.imgSource,
+        }
       ];
       
     
@@ -34,7 +25,8 @@ function ProductPage() {
             </div>
 
             <div className='product-info-container'>
-                <h1>Title</h1>
+                <h1>{props.itemName}</h1>
+                <p>${props.price}</p>
 
                 <hr></hr>
 
@@ -47,7 +39,7 @@ function ProductPage() {
 
                 <button className='add-to-cart'>Add to cart</button>
 
-                <p>Description</p>
+                <p>{props.itemDescription}</p>
 
 
             </div>
@@ -60,5 +52,10 @@ function ProductPage() {
     </div>
   );
 }
-
+ProductPage.defaultProps = {
+  imgSource: "https://via.placeholder.com/150",
+  itemName: "Item Name",
+  itemDescription: "Item Description",
+  price: "0.00"
+}
 export default ProductPage;
