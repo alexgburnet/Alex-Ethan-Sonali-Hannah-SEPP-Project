@@ -1,15 +1,15 @@
 import './ItemCard.css';
 
-function ItemCard() {
+function ItemCard(props) {
     return(
         <div className="ItemCard">
             <div className="ItemCardImage">
-                <img src="https://via.placeholder.com/150" alt="Item" />
+                <img src={props.imgSource} alt="Item" />
             </div>
             <div className="ItemCardDetails">
-                <h3>Item Name</h3>
-                <p>Item Description</p>
-                <p>Price: $0.00</p>
+                <h3>{props.itemName}</h3>
+                <p>{props.itemDescription}</p>
+                <p>Price: ${props.price}</p>
             </div>
         </div>
     );
