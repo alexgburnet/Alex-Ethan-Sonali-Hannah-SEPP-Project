@@ -2,7 +2,17 @@
     display: flex;
     flex: 9;
     overflow: auto;
-    justify-content: center;
+    flex-direction: column;
     text-align: center;
     margin: 20px;
+}
+.search-result{
+    width:100%;
+}
+.item-cards-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-gap: 20px;
+    width: 100%;
+    margin-top: 20px;
 }
