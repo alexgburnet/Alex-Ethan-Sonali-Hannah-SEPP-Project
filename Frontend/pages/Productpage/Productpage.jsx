@@ -7,11 +7,13 @@ import 'react-image-gallery/styles/css/image-gallery.css';
 
 function ProductPage() {
     const location = useLocation();
-    const { imgSource, itemName, itemDescription, price } = location.state || {};
+    console.log('ProductPage location.state:', location.state);
+
+    const { imgSource, itemName, itemDescription, price } = location.state || ProductPage.defaultProps;
 
     const images = [
         {
-            original: imgSource || ProductPage.defaultProps.imgSource,
+            original: imgSource,
         }
     ];
 
@@ -27,8 +29,8 @@ function ProductPage() {
                 </div>
 
                 <div className='product-info-container'>
-                    <h1>{itemName || ProductPage.defaultProps.itemName}</h1>
-                    <p>${price || ProductPage.defaultProps.price}</p>
+                    <h1>{itemName}</h1>
+                    <p>${price}</p>
 
                     <hr></hr>
 
@@ -41,7 +43,7 @@ function ProductPage() {
 
                     <button className='add-to-cart'>Add to cart</button>
 
-                    <p>{itemDescription || ProductPage.defaultProps.itemDescription}</p>
+                    <p>{itemDescription}</p>
                 </div>
             </div>
 
