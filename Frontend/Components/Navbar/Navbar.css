@@ -22,10 +22,9 @@ header {
     width: auto; /* Ensure it adapts to the content */
 }
 
-h1 {
+.SiteNameHeader h1 {
     white-space: nowrap; /* Prevent line breaks inside the text */
     color: #ecf0f1;
-    font-family: 'Arial', sans-serif;
     font-size: 45px;
     font-weight: bold;
     text-align: center;
