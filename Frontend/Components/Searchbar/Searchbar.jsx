@@ -18,7 +18,7 @@ function Searchbar({ onSearch }) {
         type='text'
         className='searchbar'
         placeholder='Search...'
-        onChange={handleKeyPress}
+        onKeyDown={handleKeyPress}
       />
       <div className='search-button-container' onClick={handleSearchClick}>
         <svg
