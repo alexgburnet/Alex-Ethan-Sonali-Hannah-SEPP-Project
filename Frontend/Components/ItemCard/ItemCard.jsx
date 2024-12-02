@@ -2,16 +2,17 @@ import './ItemCard.css';
 import { Link } from 'react-router-dom';
 
 function ItemCard(props) {
-    return(
-        <Link to={{
-            pathname: "/product",
-            state: {
-                imgSource: props.imgSource,
-                itemName: props.itemName,
-                itemDescription: props.itemDescription,
-                price: props.price
-            }
-        }} className="ItemCardLink">
+    const state = {
+        imgSource: props.imgSource,
+        itemName: props.itemName,
+        itemDescription: props.itemDescription,
+        price: props.price
+    };
+
+    console.log('ItemCard state:', state);
+
+    return (
+        <Link to="/product" state={state} className="ItemCardLink">
             <div className="ItemCard">
                 <div className="ItemCardImage">
                     <img src={props.imgSource} alt="Item" />
@@ -32,4 +33,5 @@ ItemCard.defaultProps = {
     itemDescription: "Item Description",
     price: "0.00"
 }
+
 export default ItemCard;
