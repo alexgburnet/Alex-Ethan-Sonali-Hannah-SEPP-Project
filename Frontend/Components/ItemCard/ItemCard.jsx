@@ -9,7 +9,6 @@ function ItemCard(props) {
         price: props.price
     };
 
-    console.log('ItemCard state:', state);
 
     return (
         <Link to="/product" state={state} className="ItemCardLink">
