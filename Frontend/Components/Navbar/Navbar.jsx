@@ -1,12 +1,36 @@
+import { useState, useEffect } from "react";
+
 import "./Navbar.css";
 import { Link } from 'react-router-dom';
 
 function Navbar () {
+
+  const [title, setTitle] = useState("Student Smart Homes");
+
+  // Function to check screen size and orientation
+  const updateTitle = () => {
+    if (window.innerWidth <= 768 || window.innerHeight > window.innerWidth) {
+      setTitle("SSH");
+    } else {
+      setTitle("Student Smart Homes");
+    }
+  };
+
+  // Add event listener for resize
+  useEffect(() => {
+    updateTitle(); // Initial check
+    window.addEventListener("resize", updateTitle);
+    return () => {
+      window.removeEventListener("resize", updateTitle); // Cleanup listener
+    };
+  }, []);
+
+
   return (
     <header>
       <div className="SiteNameHeader">
         <Link to="/" className="link">
-          <h1> Student Smart Homes</h1>
+          <h1>{title}</h1>
         </Link>
       </div>
       {/*cart icon*/}
