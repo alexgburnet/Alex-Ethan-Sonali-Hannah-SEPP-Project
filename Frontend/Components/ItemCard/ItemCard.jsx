@@ -14,5 +14,10 @@ function ItemCard(props) {
         </div>
     );
 }
-
+ItemCard.defaultProps = {
+    imgSource: "https://via.placeholder.com/150",
+    itemName: "Item Name",
+    itemDescription: "Item Description",
+    price: "0.00"
+}
 export default ItemCard;
