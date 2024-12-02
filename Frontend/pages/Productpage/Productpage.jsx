@@ -7,7 +7,6 @@ import 'react-image-gallery/styles/css/image-gallery.css';
 
 function ProductPage() {
     const location = useLocation();
-    console.log('ProductPage location.state:', location.state);
 
     const { imgSource, itemName, itemDescription, price } = location.state || ProductPage.defaultProps;
 
