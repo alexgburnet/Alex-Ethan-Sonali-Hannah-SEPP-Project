@@ -1,0 +1,22 @@
+.ItemCard {
+    background-color: white;
+    border-radius: 10px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    overflow: hidden; 
+    transition: transform 0.2s; 
+}
+
+.ItemCard:hover {
+    transform: scale(1.05); 
+}
+.ItemCardImage img {
+    width: 100%;
+    height: auto;
+    border-top-left-radius: 10px; 
+    border-top-right-radius: 10px; 
+}
+
+.ItemCardDetails {
+    padding: 15px;
+    text-align: left;
+}
