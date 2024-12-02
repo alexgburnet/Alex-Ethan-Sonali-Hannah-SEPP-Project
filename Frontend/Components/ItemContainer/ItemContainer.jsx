@@ -6,7 +6,7 @@ function ItemContainer({ searchQuery }) {
   //temporary for loop to generate a lot of cards for testing display
   for (let i = 0; i < 50; i++) {
     const randomPrice = (i).toFixed(2);
-    cardsdisplayed.push(<ItemCard price={randomPrice}/>);
+    cardsdisplayed.push(<ItemCard price={randomPrice} key={i}/>);
   }
   return (
     <div className="item-container">
