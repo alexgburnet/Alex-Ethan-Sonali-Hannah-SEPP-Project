@@ -5,7 +5,7 @@ function ItemContainer({ searchQuery }) {
   const cardsdisplayed = [];
   //temporary for loop to generate a lot of cards for testing display
   for (let i = 0; i < 50; i++) {
-    cardsdisplayed.push(<ItemCard />);
+    cardsdisplayed.push(<ItemCard imgSource="https://via.placeholder.com/150" itemName="Item Name" itemDescription="Item Description" price="2.50"/>);
   }
   return (
     <div className="item-container">
