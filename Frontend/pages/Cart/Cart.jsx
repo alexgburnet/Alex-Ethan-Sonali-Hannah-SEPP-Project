@@ -1,8 +1,17 @@
+import { useState } from 'react';
+
 import CustomButton from '../../Components/CustomButton/CustomButton';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import './Cart.css';
 
 function Cart () {
+
+    const [confirmed, setConfirmed] = useState(false);
+
+    const pressHandler = () => {
+        setConfirmed(true);
+    }
+
     return (
         <div className="cart-page">
             <Sidebar />
@@ -14,9 +23,12 @@ function Cart () {
                     <p>Your Subtotal: £12.00</p>
                     <p>Your Shipping: £1.00 (£3.00 / 3)</p>
                     <hr></hr>
+
                     <CustomButton 
-                        text='Proceed to Checkout'
+                        text={confirmed ? 'Pay' : 'Confirm Order'}
+                        onClick={pressHandler}
                     />
+                    
                 </div>
             </div>
         </div>
