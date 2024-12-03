@@ -1,0 +1,40 @@
+.cart-container{
+    display:flex;
+    width:100%;
+    height:100%;
+}
+
+.user-carts{
+    flex:6;
+    background-color: grey;
+    padding: 20px;
+}
+
+.user-subtotal-area{
+    flex:3;
+    background-color:rgb(139, 99, 99);
+    padding: 20px;
+    padding-top:50px;
+    display:flex;
+    flex-direction: column;
+    border-left: 2px solid black;
+}
+
+.user-subtotal-area hr{
+    margin-top:10px;
+    border-color: brown;
+}
+
+.add-to-cart {
+    background-color: #004084;
+    color: #ffffff;
+    font-size: 1rem;
+    margin-top:20px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 80%;
+}
+
