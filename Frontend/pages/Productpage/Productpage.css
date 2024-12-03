@@ -24,7 +24,7 @@
 }
 
 
-hr {
+.product-info-container hr {
     width: 50%;
     border: none;
     height: 2px;
