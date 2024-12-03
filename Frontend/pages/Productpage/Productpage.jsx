@@ -2,6 +2,8 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import ImageGallery from 'react-image-gallery';
 
+import CustomButton from '../../Components/CustomButton/CustomButton';
+
 import './Productpage.css';
 import 'react-image-gallery/styles/css/image-gallery.css';
 
@@ -9,6 +11,10 @@ function ProductPage() {
     const location = useLocation();
 
     const { imgSource, itemName, itemDescription, price } = location.state || ProductPage.defaultProps;
+
+    const clickHandler = () => {
+        console.log('add to cart');
+    }
 
     const images = [
         {
@@ -40,7 +46,10 @@ function ProductPage() {
 
                     <hr></hr>
 
-                    <button className='add-to-cart'>Add to cart</button>
+                    <CustomButton 
+                        text='Add to cart'
+                        onClick={clickHandler}
+                    />
 
                     <p>{itemDescription}</p>
                 </div>
