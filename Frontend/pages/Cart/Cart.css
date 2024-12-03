@@ -29,6 +29,13 @@
     border-left: 2px solid rgb(214, 214, 214);
 }
 
+.user-subtotal {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 25%;
+}
+
 .user-subtotal-area hr{
     border: none;
     height: 2px;
