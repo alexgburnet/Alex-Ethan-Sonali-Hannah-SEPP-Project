@@ -20,14 +20,16 @@ function Cart () {
                     <p>user carts here</p>
                 </div>
                 <div className="user-subtotal-area">
-                    <p>Your Subtotal: £12.00</p>
-                    <p>Your Shipping: £1.00 (£3.00 / 3)</p>
-                    <hr></hr>
+                        <div className="user-subtotal">
+                        <p>Your Subtotal: £12.00</p>
+                        <p>Your Shipping: £1.00 (£3.00 / 3)</p>
+                        <hr></hr>
 
-                    <CustomButton 
-                        text={confirmed ? 'Pay' : 'Confirm Order'}
-                        onClick={pressHandler}
-                    />
+                        <CustomButton 
+                            text={confirmed ? 'Pay' : 'Confirm Order'}
+                            onClick={pressHandler}
+                        />
+                    </div>
                     
                 </div>
             </div>
