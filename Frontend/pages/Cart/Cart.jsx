@@ -4,6 +4,8 @@ import './Cart.css';
 
 function Cart () {
     return (
+        <div className="cart-page">
+            <Sidebar />
             <div className="cart-container">
                 <div className="user-carts">
                     <p>user carts here</p>
@@ -15,6 +17,7 @@ function Cart () {
                     <button className='add-to-cart'>Add to cart</button>
                 </div>
             </div>
+        </div>
     )
 }
 
