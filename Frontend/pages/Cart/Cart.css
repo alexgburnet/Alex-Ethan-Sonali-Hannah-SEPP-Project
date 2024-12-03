@@ -1,28 +1,39 @@
+.cart-page {
+    display: flex;
+    flex-direction: row;
+    height: 95%;
+    width: 98%;
+    border: 2px solid rgb(230, 230, 230);
+    box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    margin: 20px;
+}
+
 .cart-container{
     display:flex;
-    width:100%;
+    flex: 9;
     height:100%;
 }
 
 .user-carts{
     flex:6;
-    background-color: grey;
     padding: 20px;
 }
 
 .user-subtotal-area{
     flex:3;
-    background-color:rgb(139, 99, 99);
     padding: 20px;
     padding-top:50px;
     display:flex;
     flex-direction: column;
-    border-left: 2px solid black;
+    border-left: 2px solid rgb(214, 214, 214);
 }
 
 .user-subtotal-area hr{
-    margin-top:10px;
-    border-color: brown;
+    border: none;
+    height: 2px;
+    background-color: rgb(234, 234, 234);
+    margin-top: 10px;
 }
 
 .add-to-cart {
