@@ -6,9 +6,15 @@ const purchases = [
         { item: 'Item 2', price: 15.00 },
         { item: 'Item 3', price: 20.00 },
     ];
+
+cards will not render if purchases is empty, so entire basket can be placed into this screen
  */
+
 function UserSubtotalCard(props) {
     const purchases = props.purchases;
+    if (purchases.length === 0) {
+        return null;
+    }
     const totalPrice = purchases.reduce((total, purchase) => total + purchase.price, 0);
     return (
         <div className="subtotal-card">
