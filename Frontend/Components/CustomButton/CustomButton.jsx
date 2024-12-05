@@ -11,6 +11,7 @@ import './CustomButton.css';
  * @param {function} props.onClick - The function to call when the button is clicked
  * @param {string} [props.className] - Optional custom class name for styling
  * @param {object} [props.style] - Inline styles for the button
+ * @param {boolean} [props.disabled] - whether the button is disabled
  * 
  * @returns {JSX.Element} - The rendered button element
  */
@@ -21,7 +22,12 @@ function CustomButton( props ) {
         <button
             className ={props.className ? props.className :  'custom-button'}
             onClick={props.onClick}
-            style={props.style}
+            style={{
+                ...props.style,
+                backgroundColor: props.disabled ? 'grey' : undefined,
+                cursor: props.disabled ? 'not-allowed' : 'pointer',
+            }}
+            disabled={props.disabled}
         >
             {props.text ? props.text : 'add title attribute'}
         </button>
