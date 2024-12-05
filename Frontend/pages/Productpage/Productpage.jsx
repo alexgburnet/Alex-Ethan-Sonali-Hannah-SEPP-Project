@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import ImageGallery from 'react-image-gallery';
 
 import CustomButton from '../../Components/CustomButton/CustomButton';
+import SimilarProductCard from '../../Components/SimilarProductCard/SimilarProductCard';
 
 import './Productpage.css';
 import 'react-image-gallery/styles/css/image-gallery.css';
@@ -21,6 +22,13 @@ function ProductPage() {
             original: imgSource,
         }
     ];
+
+    const cardsdisplayed = [];
+    //temporary for loop to generate a lot of cards for testing display
+    for (let i = 0; i < 10; i++) {
+        const randomPrice = (i).toFixed(2);
+        cardsdisplayed.push(<SimilarProductCard />);
+    }
 
     return (
         <div className="product-page">
@@ -54,9 +62,13 @@ function ProductPage() {
                     <p>{itemDescription}</p>
                 </div>
             </div>
-
-            <div className='similar-products-container'>
-                <p>similar products</p>
+            <div className='similar-products'>
+                <div className='title-container'>
+                    <h3>You may also like:</h3>
+                </div>
+                <div className='similar-products-container'>
+                    {cardsdisplayed}
+                </div>
             </div>
         </div>
     );

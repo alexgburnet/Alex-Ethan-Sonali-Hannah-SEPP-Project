@@ -1,0 +1,28 @@
+.similar-product-container {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden; 
+    transition: transform 0.2s; 
+    height: 100%;
+}
+
+.similar-product-container:hover {
+    transform: scale(1.05); 
+}
+
+.image-container {
+    display: flex;
+}
+
+.image-container img {
+    width: 100%;
+}
+
+.detail-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
