@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import ImageGallery from 'react-image-gallery';
 
 import CustomButton from '../../Components/CustomButton/CustomButton';
-import SimilarProductCard from '../../components/SimilarProductCard/SimilarProductCard';
+import SimilarProductCard from '../../Components/SimilarProductCard/SimilarProductCard';
 
 import './Productpage.css';
 import 'react-image-gallery/styles/css/image-gallery.css';
