@@ -1,0 +1,22 @@
+.payment-container {
+    flex: 6;
+    flex-direction: column;
+    padding: 20px;
+    max-height: 100%;
+}
+
+.payment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px
+}
+
+.payment-form label {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.payment-form input {
+    width: 70%;
+}
