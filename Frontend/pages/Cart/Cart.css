@@ -22,11 +22,6 @@
     overflow-y: auto;
 }
 
-.payment-container {
-    flex: 6;
-    padding: 20px;
-    max-height: 100%;
-}
 
 .user-subtotal-area {
     flex: 3;
@@ -38,13 +33,35 @@
 }
 
 .user-subtotal {
+    padding: 20px;
+    border-radius: 20px;
+    background-color: rgb(230, 230, 230);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;}
+    justify-content: space-between;
+    gap: 20px;
+}
 
 .user-subtotal-area hr {
     border: none;
     height: 2px;
-    background-color: rgb(234, 234, 234);
+    background-color: rgb(210, 210, 210);
     margin: 15px 0;
+}
+
+.timer p {
+    display: flex;
+    justify-content: center;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+}
+
+.address-container {
+    padding: 20px;
+    display: flex;
+    flex: 6;
+    flex-direction: column;
 }
