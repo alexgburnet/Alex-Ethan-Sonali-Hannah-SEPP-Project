@@ -16,7 +16,7 @@ function Cart () {
         country: ''
     });
 
-    const isHost = false;
+    const isHost = true;
 
     const pressHandler = () => {
         setConfirmed(true);
@@ -36,10 +36,10 @@ function Cart () {
             <div className="cart-container">
 
                 {confirmed && isHost ?
-                    <>
+                    <div className='address-container'>
                         <h3>Delivery Address:</h3>
                         <AddressForm AddressInfo={paymentInfo} setAddressInfo={setPaymentInfo}/>
-                    </>
+                    </div>
                 :
                     <div className="user-carts">
                         <UserSubtotalCard/>
