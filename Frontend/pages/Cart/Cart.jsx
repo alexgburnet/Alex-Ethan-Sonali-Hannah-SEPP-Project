@@ -36,7 +36,7 @@ function Cart () {
                     <div className='payment-container'>
                     <form className="payment-form">
                         <label>
-                            Address:
+                            <p>Address:</p>
                             <input
                                 type="text"
                                 name="address"
@@ -45,7 +45,7 @@ function Cart () {
                             />
                         </label>
                         <label>
-                            City:
+                            <p>City:</p>
                             <input
                                 type="text"
                                 name="city"
@@ -54,7 +54,7 @@ function Cart () {
                             />
                         </label>
                         <label>
-                            Postal Code:
+                            <p>Postal Code:</p>
                             <input
                                 type="text"
                                 name="postalCode"
@@ -63,7 +63,7 @@ function Cart () {
                             />
                         </label>
                         <label>
-                            Country:
+                            <p>Country:</p>
                             <input
                                 type="text"
                                 name="country"
@@ -89,11 +89,14 @@ function Cart () {
                         <p>Your Subtotal: £12.00</p>
                         <p>Your Shipping: £1.00 (£3.00 / 3)</p>
                         <hr></hr>
+                        <div className='button-container'>
+                            <CustomButton 
+                                text={confirmed ? 'Pay' : 'Confirm Order'}
+                                onClick={pressHandler}
+                            />
+                        </div>
 
-                        <CustomButton 
-                            text={confirmed ? 'Pay' : 'Confirm Order'}
-                            onClick={pressHandler}
-                        />
+                        {!confirmed || <p> hh:mm to pay</p>}
                     </div>
                     
                 </div>
