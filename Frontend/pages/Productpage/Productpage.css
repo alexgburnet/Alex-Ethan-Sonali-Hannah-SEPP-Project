@@ -90,14 +90,39 @@
     transform: translateY(1px);
 }
 
+.similar-products {
+    border-top: 2px solid rgb(234, 234, 234);
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+    flex: 1.3;
+    overflow: hidden;
+}
+
+.title-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
 .similar-products-container {
     display: flex;
-    flex: 1;
-    align-items: center;
-    justify-content: center;
+    flex-direction: row;
+    gap: 20px;
     text-align: center;
-    border-top: 2px solid rgb(234, 234, 234);
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 10px;
+    height: 100%;
+}
+
+.similar-products-container > * {
+    flex-shrink: 0; /* Prevent cards from shrinking */
+    height: 100%; /* Match the height of the parent container */
+    max-height: 100%; /* Ensure they don't exceed the parent container's height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .image-gallery {
