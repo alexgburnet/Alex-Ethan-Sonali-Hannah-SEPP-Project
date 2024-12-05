@@ -71,7 +71,7 @@ function Cart () {
                             }
                         </div>
 
-                        {!confirmed || <p> hh:mm to pay</p>}
+                        {!confirmed || <div className='timer'><p> hh:mm to pay</p></div>}
                     </div>
                     
                 </div>
