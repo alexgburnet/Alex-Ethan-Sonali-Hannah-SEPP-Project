@@ -3,6 +3,7 @@ import { useState } from 'react';
 import CustomButton from '../../Components/CustomButton/CustomButton';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import UserSubtotalCard from '../../Components/UserSubtotalCard/UserSubtotalCard';
+import AddressForm from '../../Components/AddressForm/AddressForm';
 import './Cart.css';
 
 function Cart () {
@@ -14,6 +15,8 @@ function Cart () {
         postalCode: '',
         country: ''
     });
+
+    const isHost = false;
 
     const pressHandler = () => {
         setConfirmed(true);
@@ -31,69 +34,41 @@ function Cart () {
         <div className="cart-page">
             <Sidebar />
             <div className="cart-container">
-                {confirmed ? 
-                <div className='payment-container'>
-                    <div className='payment-container'>
-                    <form className="payment-form">
-                        <label>
-                            <p>Address:</p>
-                            <input
-                                type="text"
-                                name="address"
-                                value={paymentInfo.address}
-                                onChange={handleInputChange}
-                            />
-                        </label>
-                        <label>
-                            <p>City:</p>
-                            <input
-                                type="text"
-                                name="city"
-                                value={paymentInfo.city}
-                                onChange={handleInputChange}
-                            />
-                        </label>
-                        <label>
-                            <p>Postal Code:</p>
-                            <input
-                                type="text"
-                                name="postalCode"
-                                value={paymentInfo.postalCode}
-                                onChange={handleInputChange}
-                            />
-                        </label>
-                        <label>
-                            <p>Country:</p>
-                            <input
-                                type="text"
-                                name="country"
-                                value={paymentInfo.country}
-                                onChange={handleInputChange}
-                            />
-                        </label>
-                    </form>
-                </div>
-                </div>
+
+                {confirmed && isHost ?
+                    <>
+                        <h3>Delivery Address:</h3>
+                        <AddressForm AddressInfo={paymentInfo} setAddressInfo={setPaymentInfo}/>
+                    </>
                 :
-                <div className="user-carts">
-                    <UserSubtotalCard/>
-                    <UserSubtotalCard/>
-                    <UserSubtotalCard/>
-                    <UserSubtotalCard/>
-                    <UserSubtotalCard/>
-                    <UserSubtotalCard/>
-                </div>
-            }
+                    <div className="user-carts">
+                        <UserSubtotalCard/>
+                        <UserSubtotalCard/>
+                        <UserSubtotalCard/>
+                        <UserSubtotalCard/>
+                        <UserSubtotalCard/>
+                        <UserSubtotalCard/>
+                    </div>
+                }
+
                 <div className="user-subtotal-area">
                         <div className="user-subtotal">
                         <p>Your Subtotal: £12.00</p>
                         <p>Your Shipping: £1.00 (£3.00 / 3)</p>
                         <hr></hr>
                         <div className='button-container'>
-                            <CustomButton 
-                                text={confirmed ? 'Pay' : 'Confirm Order'}
+                            {isHost ? 
+                                <CustomButton 
+                                    text={confirmed ? 'Pay' : 'Confirm Order'}
+                                    onClick={pressHandler}
+                                />
+                                :
+                                <CustomButton 
+                                text={confirmed ? 'Pay' : 'Host must confirm order'}
                                 onClick={pressHandler}
+                                disabled={confirmed ? false : true}
                             />
+                            }
                         </div>
 
                         {!confirmed || <p> hh:mm to pay</p>}
