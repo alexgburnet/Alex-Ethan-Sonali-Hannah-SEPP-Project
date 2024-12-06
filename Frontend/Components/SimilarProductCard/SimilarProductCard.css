@@ -1,28 +1,38 @@
 .similar-product-container {
     display: flex;
     flex-direction: column;
-    border-radius: 10px; 
+    border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden; 
-    transition: transform 0.2s; 
-    height: 100%;
+    overflow: hidden;
+    transition: transform 0.2s;
+    height: 100%; /* Match parent's height */
+    width: auto; /* Allow flexible width */
 }
 
 .similar-product-container:hover {
-    transform: scale(1.05); 
+    transform: scale(1.05);
 }
 
 .image-container {
+    flex: 1; /* Allow image container to stretch */
     display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
 }
 
 .image-container img {
     width: 100%;
+    height: auto; /* Maintain aspect ratio */
+    object-fit: cover; /* Ensures the image fills the container */
 }
 
 .detail-container {
-    flex: 1;
+    flex: 0; /* Fix size of the detail section */
+    padding: 10px; /* Add some spacing */
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9; /* Optional background for distinction */
 }
