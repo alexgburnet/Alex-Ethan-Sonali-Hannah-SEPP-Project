@@ -1,3 +1,5 @@
+import React from 'react';
+
 import './ItemContainer.css';
 import ItemCard from '../ItemCard/ItemCard';
 

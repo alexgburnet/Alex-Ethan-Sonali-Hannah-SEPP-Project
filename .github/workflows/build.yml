@@ -35,7 +35,12 @@ jobs:
         working-directory: Frontend
         run: npm install
 
-      # Step 5: Build the project
+      # step 5: Test components before build
+      - name: Run Tests
+        working-directory: Frontend
+        run: npm test
+
+      # Step 6: Build the project
       - name: Build the project
         working-directory: Frontend
         run: npm run build
