@@ -1,3 +1,5 @@
+import React from 'react';
+
 import './UserSubtotalCard.css';
 
 /*purchase array should be of form
