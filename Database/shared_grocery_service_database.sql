@@ -181,7 +181,7 @@ ALTER TABLE ONLY public.orders
 
 
 --
--- Name: shared_order shared_order_user_email_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sepp
+-- Name: shared_order shared_order_host_email_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sepp
 --
 
 ALTER TABLE ONLY public.shared_order
