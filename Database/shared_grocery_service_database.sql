@@ -47,13 +47,27 @@ ALTER TABLE public.item OWNER TO sepp;
 
 CREATE TABLE public.shared_order (
     order_id integer NOT NULL,
+    host_email text,
+    order_confirmed boolean,
+    time_confirmed timestamp,
+);
+
+
+ALTER TABLE public.shared_order OWNER TO sepp;
+
+--
+-- Name: orders; Type: TABLE; Schema: public; Owner: sepp
+--
+
+CREATE TABLE public.orders (
+    order_id integer NOT NULL,
     user_email text,
     item_id integer,
     item_quantity integer
 );
 
 
-ALTER TABLE public.shared_order OWNER TO sepp;
+ALTER TABLE public.orders OWNER TO sepp;
 
 --
 -- Name: user; Type: TABLE; Schema: public; Owner: sepp
@@ -63,8 +77,6 @@ CREATE TABLE public."user" (
     user_email text NOT NULL,
     user_firstname text,
     user_lastname text,
-    primary_user boolean,
-    order_confirmed boolean
 );
 
 
@@ -80,15 +92,23 @@ COPY public.item (item_id, supermarket_id, item_cost, promotion_id, promotion_ty
 19	3	5.75	10	101
 \.
 
+--
+-- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: sepp
+--
+
+COPY public.orders (order_id, user_email, item_id, item_quantity) FROM stdin;
+0	sxp1114@student.bham.ac.uk  47  5
+0	sxp1114@student.bham.ac.uk  23  2
+0	exw358@student.bham.ac.uk   19  6
+\.
+
 
 --
 -- Data for Name: shared_order; Type: TABLE DATA; Schema: public; Owner: sepp
 --
 
-COPY public.shared_order (order_id, user_email, item_id, item_quantity) FROM stdin;
-0	sxp1114@student.bham.ac.uk	47	4
-1	sxp1114@student.bham.ac.uk	23	2
-2	hxr332@student.bham.ac.uk	19	3
+COPY public.shared_order (order_id, host_email, order_confirmed, time_confirmed) FROM stdin;
+0	sxp1114@student.bham.ac.uk  0   0
 \.
 
 
@@ -96,11 +116,11 @@ COPY public.shared_order (order_id, user_email, item_id, item_quantity) FROM std
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: sepp
 --
 
-COPY public."user" (user_email, user_firstname, user_lastname, primary_user, order_confirmed) FROM stdin;
-sxp1114@student.bham.ac.uk	Sonali	Patel	t	f
-hxr332@student.bham.ac.uk	Hannah	Rowe	f	f
-agb194@student.bham.ac.uk	Alex	Burnet	f	f
-exw358@student.bham.ac.uk	Ethan	Wright	f	f
+COPY public."user" (user_email, user_firstname, user_lastname) FROM stdin;
+sxp1114@student.bham.ac.uk	Sonali	Patel
+hxr332@student.bham.ac.uk	Hannah	Rowe
+agb194@student.bham.ac.uk	Alex	Burnet
+exw358@student.bham.ac.uk	Ethan	Wright
 \.
 
 
@@ -127,21 +147,45 @@ ALTER TABLE ONLY public.shared_order
 ALTER TABLE ONLY public."user"
     ADD CONSTRAINT user_pkey PRIMARY KEY (user_email);
 
+--
+-- Name: user orders_pkey; Type: CONSTRAINT; Schema: public; Owner: sepp
+--
+
+ALTER TABLE ONLY public.orders
+    ADD CONSTRAINT order_pkey PRIMARY KEY (order_id, user_email, item_id);
+
 
 --
--- Name: shared_order shared_order_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sepp
+-- Name: orders orders_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sepp
+--
+
+ALTER TABLE ONLY public.orders
+    ADD CONSTRAINT orders_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.item(item_id);
+
+
+--
+-- Name: orders orders_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sepp
+--
+
+ALTER TABLE ONLY public.orders
+    ADD CONSTRAINT orders_email_id_fkey FOREIGN KEY (user_email) REFERENCES public."user"(user_email);
+
+
+--
+-- Name: orders orders_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sepp
+--
+
+ALTER TABLE ONLY public.orders
+    ADD CONSTRAINT orders_id_fkey FOREIGN KEY (order_id) REFERENCES public.shared_order(order_id);
+
+
+
+--
+-- Name: shared_order shared_order_host_email_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sepp
 --
 
 ALTER TABLE ONLY public.shared_order
-    ADD CONSTRAINT shared_order_item_id_fkey FOREIGN KEY (item_id) REFERENCES public.item(item_id);
-
-
---
--- Name: shared_order shared_order_user_email_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sepp
---
-
-ALTER TABLE ONLY public.shared_order
-    ADD CONSTRAINT shared_order_user_email_fkey FOREIGN KEY (user_email) REFERENCES public."user"(user_email);
+    ADD CONSTRAINT shared_order_host_email_fkey FOREIGN KEY (host_email) REFERENCES public."user"(user_email);
 
 
 --
