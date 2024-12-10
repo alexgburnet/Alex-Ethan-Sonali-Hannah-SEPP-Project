@@ -1,3 +1,9 @@
+CREATE USER sepp WITH PASSWORD 'sepp';
+
+CREATE DATABASE shared_grocery_service OWNER sepp;
+
+\connect shared_grocery_service
+
 --
 -- PostgreSQL database dump
 --
