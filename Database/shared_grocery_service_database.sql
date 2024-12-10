@@ -1,6 +1,6 @@
-CREATE USER sepp WITH PASSWORD 'sepp';
+CREATE USER :db_user WITH PASSWORD ':db_password'; -- placeholders to be replaced at runtime
 
-CREATE DATABASE shared_grocery_service OWNER sepp;
+CREATE DATABASE :db_name OWNER :db_user; -- placeholders to be replaced at runtime
 
 \connect shared_grocery_service
 
