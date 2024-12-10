@@ -1,0 +1,8 @@
+# Use postgres
+FROM postgres:16.2
+
+# Copy sql script into container
+COPY shared_grocery_service.sql /docker-entrypoint-shared_grocery_servicedb.d/
+
+# Expose PostgreSQL port
+EXPOSE 5432
