@@ -1,6 +1,6 @@
-CREATE USER sepp WITH PASSWORD 'sepp';
+CREATE USER :db_user WITH PASSWORD ':db_password'; -- placeholders to be replaced at runtime
 
-CREATE DATABASE shared_grocery_service OWNER sepp;
+CREATE DATABASE :db_name OWNER :db_user; -- placeholders to be replaced at runtime
 
 \connect shared_grocery_service
 
@@ -27,7 +27,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: item; Type: TABLE; Schema: public; Owner: sepp
+-- Name: item; Type: TABLE; Schema: public;
 --
 
 CREATE TABLE public.item (
@@ -39,10 +39,10 @@ CREATE TABLE public.item (
 );
 
 
-ALTER TABLE public.item OWNER TO sepp;
+ALTER TABLE public.item OWNER TO :db_user;
 
 --
--- Name: shared_order; Type: TABLE; Schema: public; Owner: sepp
+-- Name: shared_order; Type: TABLE; Schema: public;
 --
 
 CREATE TABLE public.shared_order (
@@ -53,10 +53,10 @@ CREATE TABLE public.shared_order (
 );
 
 
-ALTER TABLE public.shared_order OWNER TO sepp;
+ALTER TABLE public.shared_order OWNER TO :db_user;
 
 --
--- Name: orders; Type: TABLE; Schema: public; Owner: sepp
+-- Name: orders; Type: TABLE; Schema: public;
 --
 
 CREATE TABLE public.orders (
@@ -67,10 +67,10 @@ CREATE TABLE public.orders (
 );
 
 
-ALTER TABLE public.orders OWNER TO sepp;
+ALTER TABLE public.orders OWNER TO :db_user;
 
 --
--- Name: user; Type: TABLE; Schema: public; Owner: sepp
+-- Name: user; Type: TABLE; Schema: public;
 --
 
 CREATE TABLE public."user" (
@@ -80,10 +80,10 @@ CREATE TABLE public."user" (
 );
 
 
-ALTER TABLE public."user" OWNER TO sepp;
+ALTER TABLE public."user" OWNER TO :db_user;
 
 --
--- Data for Name: item; Type: TABLE DATA; Schema: public; Owner: sepp
+-- Data for Name: item; Type: TABLE DATA; Schema: public;
 --
 
 COPY public.item (item_id, supermarket_id, item_cost, promotion_id, promotion_type) FROM stdin;
@@ -93,7 +93,7 @@ COPY public.item (item_id, supermarket_id, item_cost, promotion_id, promotion_ty
 \.
 
 --
--- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: sepp
+-- Data for Name: orders; Type: TABLE DATA; Schema: public;
 --
 
 COPY public.orders (order_id, user_email, item_id, item_quantity) FROM stdin;
@@ -104,7 +104,7 @@ COPY public.orders (order_id, user_email, item_id, item_quantity) FROM stdin;
 
 
 --
--- Data for Name: shared_order; Type: TABLE DATA; Schema: public; Owner: sepp
+-- Data for Name: shared_order; Type: TABLE DATA; Schema: public;
 --
 
 COPY public.shared_order (order_id, host_email, order_confirmed, time_confirmed) FROM stdin;
@@ -113,7 +113,7 @@ COPY public.shared_order (order_id, host_email, order_confirmed, time_confirmed)
 
 
 --
--- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: sepp
+-- Data for Name: user; Type: TABLE DATA; Schema: public;
 --
 
 COPY public."user" (user_email, user_firstname, user_lastname) FROM stdin;
@@ -125,7 +125,7 @@ exw358@student.bham.ac.uk	Ethan	Wright
 
 
 --
--- Name: item item_pkey; Type: CONSTRAINT; Schema: public; Owner: sepp
+-- Name: item item_pkey; Type: CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.item
@@ -133,7 +133,7 @@ ALTER TABLE ONLY public.item
 
 
 --
--- Name: shared_order shared_order_pkey; Type: CONSTRAINT; Schema: public; Owner: sepp
+-- Name: shared_order shared_order_pkey; Type: CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.shared_order
@@ -141,14 +141,14 @@ ALTER TABLE ONLY public.shared_order
 
 
 --
--- Name: user user_pkey; Type: CONSTRAINT; Schema: public; Owner: sepp
+-- Name: user user_pkey; Type: CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public."user"
     ADD CONSTRAINT user_pkey PRIMARY KEY (user_email);
 
 --
--- Name: user orders_pkey; Type: CONSTRAINT; Schema: public; Owner: sepp
+-- Name: user orders_pkey; Type: CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.orders
@@ -156,7 +156,7 @@ ALTER TABLE ONLY public.orders
 
 
 --
--- Name: orders orders_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sepp
+-- Name: orders orders_item_id_fkey; Type: FK CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.orders
@@ -164,7 +164,7 @@ ALTER TABLE ONLY public.orders
 
 
 --
--- Name: orders orders_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sepp
+-- Name: orders orders_item_id_fkey; Type: FK CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.orders
@@ -172,7 +172,7 @@ ALTER TABLE ONLY public.orders
 
 
 --
--- Name: orders orders_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sepp
+-- Name: orders orders_id_fkey; Type: FK CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.orders
@@ -181,7 +181,7 @@ ALTER TABLE ONLY public.orders
 
 
 --
--- Name: shared_order shared_order_host_email_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sepp
+-- Name: shared_order shared_order_host_email_fkey; Type: FK CONSTRAINT; Schema: public;
 --
 
 ALTER TABLE ONLY public.shared_order
