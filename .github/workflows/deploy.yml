@@ -20,7 +20,7 @@ jobs:
     
     - name: Deploy to Azure VM
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
           # Navigate to project directory, else clone it
           cd Alex-Ethan-Sonali-Hannah-SEPP-Project || (git clone https://github.com/alexgburnet/Alex-Ethan-Sonali-Hannah-SEPP-Project.git && cd Alex-Ethan-Sonali-Hannah-SEPP-Project)
 
