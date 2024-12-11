@@ -40,7 +40,7 @@ CREATE TABLE public.user (
 INSERT INTO public.item (item_id, item_name, supermarket_id, item_cost, promotion_id, promotion_type, item_photo_url) VALUES
 (47, 'milk', 2, 2.50, 0, 0, 'https://www.xx.com'),
 (23, 'eggs', 5, 4.00, 1, 10, 'https://www.yy.co.uk'),
-(19, 'bread', 3, 5.75, 0, 0, 'https://www.zz.com');
+(19, 'bread', 3, 5.75, 0, 0, 'https://www.zz.com'),
 (22, 'milk chocolate', 6, 1.90, 5, 50, 'https://www.aa.com');
 
 INSERT INTO public.shared_order (order_id, host_email, order_confirmed, time_confirmed) VALUES
