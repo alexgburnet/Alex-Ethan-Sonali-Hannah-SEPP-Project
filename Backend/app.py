@@ -36,6 +36,8 @@ def get_final_cost():
     result = db.engine.execute("SELECT * FROM your_table")
     rows = [dict(row) for row in result]
     return {'data': rows}
+    #recieve order_id and user_id and return a float
+    #just do percent-off promotions
 
 ## GET COST BEFORE PROMOTIONS
 ## This endpoint will take in the following parameters:
@@ -53,6 +55,7 @@ def get_cost_before_promotions():
     result = db.engine.execute("SELECT * FROM your_table")
     rows = [dict(row) for row in result]
     return {'data': rows}
+    #same as above dont apply promotions
 
 ## ADD TO BASKET ENDPOINT
 ## This endpoint will take in the following parameters:
@@ -87,6 +90,9 @@ def add_to_basket():
     result = db.engine.execute("SELECT * FROM your_table")
     rows = [dict(row) for row in result]
     return {'data': rows}
+    #check database is not empty - if it is, call a subprogram to create an order
+    #needs to check that verification is set to false
+    #add information to orders table
 
 ## GET PRODUCT INFO ENDPOINT
 ## This endpoint will take in the following parameters:
@@ -104,6 +110,7 @@ def get_product_info():
     result = db.engine.execute("SELECT * FROM your_table")
     rows = [dict(row) for row in result]
     return {'data': rows}
+    #return everything in the item table
 
 ## GET TIME LEFT ENDPOINT
 ## This endpoint will take in the following parameters:
@@ -121,6 +128,7 @@ def get_time_left():
     result = db.engine.execute("SELECT * FROM your_table")
     rows = [dict(row) for row in result]
     return {'data': rows}
+    #send timestamp
 
 ## SEARCH RESULT ENDPOINT
 ## This endpoint will take in the following parameters:
@@ -138,6 +146,8 @@ def search_result():
     result = db.engine.execute("SELECT * FROM your_table")
     rows = [dict(row) for row in result]
     return {'data': rows}
+    #use soundex to search
+    #return all from item table 
 
 ## CONFIRM ORDER ENDPOINT
 ## This endpoint will take in the following parameters:
@@ -166,6 +176,10 @@ def confirm_order():
     result = db.engine.execute("SELECT * FROM your_table")
     rows = [dict(row) for row in result]
     return {'data': rows}
+    #set status to confirm
+    #check timestamp for order id
+        #if true copy the timestamp
+        #if false create one: get the current time
 
 ## CHECK IF ORDER CONFIRMED ENDPOINT
 ## This endpoint will take in the following parameters:
@@ -183,6 +197,7 @@ def check_if_order_confirmed():
     result = db.engine.execute("SELECT * FROM your_table")
     rows = [dict(row) for row in result]
     return {'data': rows}
+    #check order id is true for everything return true or false ('data' : true) etc.
 
 ## USER IS ORDER HOST ENDPOINT
 ## This endpoint will take in the following parameters:
@@ -202,6 +217,7 @@ def user_is_host():
     result = db.engine.execute("SELECT * FROM your_table")
     rows = [dict(row) for row in result]
     return {'data': rows}
+    #return true or false 
 
 ## GET USER BASKET ENDPOINT
 ## This endpoint will take in the following parameters:
@@ -221,23 +237,8 @@ def get_user_basket():
     result = db.engine.execute("SELECT * FROM your_table")
     rows = [dict(row) for row in result]
     return {'data': rows}
-
-## GET FULL BASKET ENDPOINT
-## This endpoint will take in the following parameters:
-## - Order ID
-## This endpoint will return the full basket of the order, seperated by users
-## GET request to /get_full_basket?order_id=1
-@app.route("/get_full_basket")
-def get_full_basket():
-    # Get the order ID from the request
-    order_id = request.args.get('order_id')
-    if not order_id:
-        return {'error': 'Please provide an order ID'}, 400
-    
-    # TODO - Implement the logic to retrieve the full basket of the order
-    result = db.engine.execute("SELECT * FROM your_table")
-    rows = [dict(row) for row in result]
-    return {'data': rows}
+    #return orders table as relevant and join it to item table
+    #item name, quantity, price, promotion type, url, id
 
 
 
