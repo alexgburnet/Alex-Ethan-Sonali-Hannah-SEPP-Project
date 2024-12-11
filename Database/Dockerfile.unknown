@@ -1,19 +1,7 @@
-# Imports
-FROM postgres:16.2
 FROM postgres:latest
 
-# Copy sql script into container
-COPY shared_grocery_service.sql /docker-entrypoint-shared_grocery_servicedb.d/
+# Copy SQL scripts for initialization
+COPY init.sql /docker-entrypoint-initdb.d/
 
 # Expose PostgreSQL port
 EXPOSE 5432
-
-
-# Set up variables so credentials can then be pulled from the .env file
-ARG DB_USER
-ARG DB_PASSWORD
-ARG DB_NAME
-
-ENV DB_USER=$DB_USER
-ENV DB_PASSWORD=$DB_PASSWORD
-ENV DB_NAME=$DB_NAME
