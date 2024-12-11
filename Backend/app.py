@@ -36,6 +36,10 @@ def get_final_cost():
     if not order_id:
         return {'error': 'Please provide an order ID'}, 400
     
+    return jsonify({
+        "final_cost": 100.00 # INCLUDE DELIVERY COST
+    })
+    
     # TODO - Implement the logic to calculate the final cost of the order
     #result = db.engine.execute("SELECT * FROM your_table")
     #rows = [dict(row) for row in result]
