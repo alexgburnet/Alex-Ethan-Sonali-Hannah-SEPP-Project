@@ -58,6 +58,7 @@ function ItemContainer({ searchQuery }) {
               itemName={item.itemName || "Item Name"} // Default name if missing
               itemDescription={item.itemDescription || "Item Description"} // Default description if missing
               price={item.price ? item.price.toFixed(2) : "0.00"} // Format price
+              productId={item.productId}
             />
           ))
         }
