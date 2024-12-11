@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom'
 
 import './SimilarProductCard.css'
 
-function SimilarProductCard () {
+function SimilarProductCard (props) {
 
 
     return (
-            <Link to='/product' className='similar-product-container'>
+            <Link to={`/product/${props.productId}`} className='similar-product-container'>
                 <div className='image-container'>
                     <img src='https://via.placeholder.com/150' alt="Item" />
                 </div>
