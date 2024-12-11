@@ -47,7 +47,10 @@ function ItemContainer({ searchQuery }) {
       {loading && <p>Loading...</p>}
       {error && <p className="error">{error}</p>}
       <div className="item-cards-grid">
-        {items.length > 0 ? (
+        {searchQuery && items.length === 0 && !loading && !error && (
+          <p>No items found</p>
+        )}
+        {items.length > 0 && 
           items.map((item, index) => (
             <ItemCard
               key={index}
@@ -57,9 +60,7 @@ function ItemContainer({ searchQuery }) {
               price={item.price ? item.price.toFixed(2) : "0.00"} // Format price
             />
           ))
-        ) : (
-          <p>No items found</p>
-        )}
+        }
       </div>
     </div>
   );
