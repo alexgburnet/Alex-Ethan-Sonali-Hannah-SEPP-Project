@@ -13,6 +13,7 @@ function Cart () {
 
     const [confirmed, setConfirmed] = useState(false);
     const [isHost, setIsHost] = useState(false);
+    const [orderConfirmed, setOrderConfirmed] = useState(false); // New state variable
     const [paymentInfo, setPaymentInfo] = useState({
         address: '',
         city: '',
@@ -24,9 +25,32 @@ function Cart () {
     const [deliveryCost, setDeliveryCost] = useState({ total: 0, individual: 0 }); // State to store delivery cost
     const [loading, setLoading] = useState(true);   // State to manage loading
     const [error, setError] = useState(null);       // State to manage errors
+    const [confirming, setConfirming] = useState(false); // New state for confirmation loading
 
-    const pressHandler = () => {
-        setConfirmed(true);
+    const pressHandler = async () => {
+        setConfirming(true); // Start confirmation loading
+        setError(null); // Reset any previous errors
+
+        try {
+            const response = await axios.post(`${API_URL}/confirm_order`, {
+                user_id,
+                order_id
+            });
+
+            if (response.data && response.data.success) {
+                setConfirmed(true); // Update confirmed state on success
+                // Optionally, you might want to refetch the confirmation status
+                // to ensure synchronization
+                // fetchData();
+            } else {
+                setError(response.data.message || "Failed to confirm the order.");
+            }
+        } catch (err) {
+            console.error("Error confirming order:", err);
+            setError("An error occurred while confirming the order.");
+        } finally {
+            setConfirming(false); // End confirmation loading
+        }
     }
 
     const handleInputChange = (e) => {
@@ -43,15 +67,11 @@ function Cart () {
     const user_id = query.get('user_id') || 'xxx'; // Replace 'xxx' with actual user_id or handle accordingly
     const order_id = query.get('order_id') || 'xxx'; // Replace 'xxx' with actual order_id or handle accordingly
 
-    // Function to fetch user basket and delivery cost data from the API
+    // Function to fetch user basket, delivery cost, host status, and order confirmation status from the API
     const fetchData = async () => {
         try {
-            // Replace 'xxx' with actual user_id and order_id, possibly from props or context
-            const user_id = 'xxx'; // Replace with actual user_id
-            const order_id = 'xxx'; // Replace with actual order_id
-    
             // Fetch all APIs in parallel
-            const [basketResponse, deliveryResponse, hostResponse] = await Promise.all([
+            const [basketResponse, deliveryResponse, hostResponse, confirmResponse] = await Promise.all([
                 axios.get(`${API_URL}/get_user_basket`, {
                     params: { user_id, order_id }
                 }),
@@ -60,16 +80,19 @@ function Cart () {
                 }),
                 axios.get(`${API_URL}/user_is_host`, {
                     params: { user_id, order_id }
+                }),
+                axios.get(`${API_URL}/check_if_order_confirmed`, {
+                    params: { order_id }
                 })
             ]);
-    
+
             // Handle user basket response
             if (basketResponse.data && basketResponse.data.userCarts) {
                 setUserCarts(basketResponse.data.userCarts);
             } else {
                 setError("Invalid response from basket API.");
             }
-    
+
             // Handle delivery cost response
             if (deliveryResponse.data && deliveryResponse.data.total !== undefined && deliveryResponse.data.individual !== undefined) {
                 setDeliveryCost({
@@ -79,17 +102,27 @@ function Cart () {
             } else {
                 setError("Invalid response from delivery cost API.");
             }
-    
+
             // Handle host status response
             if (hostResponse.data && typeof hostResponse.data.isHost === 'boolean') {
                 setIsHost(hostResponse.data.isHost);
             } else {
                 setError("Invalid response from host status API.");
             }
-    
+
+            // Handle order confirmation response
+            if (confirmResponse.data && typeof confirmResponse.data.confirmed === 'boolean') {
+                setOrderConfirmed(confirmResponse.data.confirmed);
+                if (confirmResponse.data.confirmed) {
+                    setConfirmed(true); // If already confirmed, update the confirmed state
+                }
+            } else {
+                setError("Invalid response from order confirmation API.");
+            }
+
         } catch (err) {
             console.error("Error fetching data:", err);
-            setError("Failed to fetch cart, delivery, or host data.");
+            setError("Failed to fetch cart, delivery, host, or confirmation data.");
         } finally {
             setLoading(false);
         }
@@ -108,10 +141,20 @@ function Cart () {
         }, 0);
     };
 
+    // Function to calculate total number of items for Shipping calculation based on the first userCart
+    const calculateTotalItems = () => {
+        if (userCarts.length === 0) return 0;
+        const firstUserCart = userCarts[0];
+        return firstUserCart.purchases.reduce((acc, purchase) => {
+            return acc + purchase.quantity;
+        }, 0);
+    };
+
     // Calculate Subtotal and Shipping based on fetched data
     const subtotal = calculateSubtotal();
-    const shipping = deliveryCost.total; // Use the fetched total delivery cost
-    const total = subtotal + deliveryCost.individual; // Calculate total cost
+    const totalItems = calculateTotalItems();
+    const shipping = deliveryCost.individual * totalItems; // Correct shipping calculation
+    const total = subtotal + shipping; // Correct total calculation
 
     // Conditional rendering based on loading and error states
     if (loading) {
@@ -182,22 +225,38 @@ function Cart () {
                 <div className="user-subtotal-area">
                     <div className="user-subtotal">
                         <p><strong>Subtotal:</strong> £{subtotal.toFixed(2)}</p>
-                        <p><strong>Shipping:</strong> £{shipping.toFixed(2)} {deliveryCost.individual ? ` (Individual: £${deliveryCost.individual.toFixed(2)})` : ''}</p>
+                        <p>
+                            <strong>Shipping:</strong> £{shipping.toFixed(2)} 
+                            {deliveryCost.individual ? ` (£${deliveryCost.individual.toFixed(2)} x ${totalItems})` : ''}
+                        </p>
                         <hr />
                         <div className='button-container'>
                             {isHost ? 
                                 <CustomButton 
-                                    text={confirmed ? 'Pay' : 'Confirm Order'}
+                                    text={confirmed ? 'Pay' : (confirming ? 'Confirming...' : 'Confirm Order')}
                                     onClick={pressHandler}
+                                    disabled={confirming || orderConfirmed} // Disable during confirmation or if already confirmed
                                 />
                                 :
                                 <CustomButton 
                                     text={confirmed ? 'Pay' : 'Host must confirm order'}
                                     onClick={pressHandler}
-                                    disabled={confirmed ? false : true}
+                                    disabled={!confirmed || orderConfirmed} // Disable based on confirmation status
                                 />
                             }
                         </div>
+
+                        {orderConfirmed && (
+                            <div className='confirmation-message'>
+                                <p>Your order has been confirmed!</p>
+                            </div>
+                        )}
+
+                        {error && (
+                            <div className='error-message'>
+                                <p>Error: {error}</p>
+                            </div>
+                        )}
 
                         {confirmed && (
                             <div className='timer'>
