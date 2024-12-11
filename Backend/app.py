@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import os
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 load_dotenv()
 
@@ -15,6 +16,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@l
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+CORS(app)
 
 @app.route("/")
 def hello_world():
@@ -142,10 +144,45 @@ def search_result():
     if not search_query:
         return {'error': 'Please provide a search query'}, 400
     
+    items = [
+        {
+            "imgSource": "https://via.placeholder.com/150",
+            "itemName": "Item 1",
+            "itemDescription": "Description for Item 1. This is a great product.",
+            "price": 19.99
+        },
+        {
+            "imgSource": "https://via.placeholder.com/150",
+            "itemName": "Item 2",
+            "itemDescription": "Description for Item 2. Another fantastic item.",
+            "price": 29.99
+        },
+        {
+            "imgSource": "https://via.placeholder.com/150",
+            "itemName": "Item 3",
+            "itemDescription": "Description for Item 3. You won't regret buying this.",
+            "price": 49.99
+        },
+        {
+            "imgSource": "https://via.placeholder.com/150",
+            "itemName": "Item 4",
+            "itemDescription": "Description for Item 4. Best value for your money.",
+            "price": 9.99
+        },
+        {
+            "imgSource": "https://via.placeholder.com/150",
+            "itemName": "Item 5",
+            "itemDescription": "Description for Item 5. Top quality product.",
+            "price": 39.99
+        }
+    ]
+
+    return {'items': items}
+    
     # TODO - Implement the logic to search the items based on the query
-    result = db.engine.execute("SELECT * FROM your_table")
-    rows = [dict(row) for row in result]
-    return {'data': rows}
+    #result = db.engine.execute("SELECT * FROM your_table")
+    #rows = [dict(row) for row in result]
+    #return {'data': rows}
     #use soundex to search
     #return all from item table 
 
