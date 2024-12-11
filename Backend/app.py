@@ -1,10 +1,17 @@
+from dotenv import load_dotenv
+import os
 from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 
+load_dotenv()
+
+db_user = os.getenv('DB_USER', 'default_user')
+db_password = os.getenv('DB_PASSWORD', 'default_password')
+db_name = os.getenv('DB_NAME', 'default_db')
+
 app = Flask(__name__)
 
-# Change the URL here for our databse
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://username:password@localhost:5432/your_database'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@localhost:5432/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
