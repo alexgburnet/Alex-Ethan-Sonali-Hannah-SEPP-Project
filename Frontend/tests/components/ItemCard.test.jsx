@@ -54,12 +54,12 @@ describe('ItemCard', () => {
   it('links to the /product route', () => {
     render(
       <MemoryRouter>
-        <ItemCard itemName="Linked Item" />
+        <ItemCard itemName="Linked Item" productId="123" />
       </MemoryRouter>
     );
 
     const link = screen.getByRole('link');
     expect(link).toBeTruthy();
-    expect(link.getAttribute('href')).toBe('/product');
+    expect(link.getAttribute('href')).toBe('/product/123');
   });
 });
