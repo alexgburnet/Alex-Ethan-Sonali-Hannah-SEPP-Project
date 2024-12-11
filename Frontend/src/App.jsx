@@ -19,7 +19,7 @@ function App() {
       <div className='page-container'>
         <Routes>
           <Route path="/" element={<Homepage />} />
-          <Route path="/product" element={<Productpage />} />
+          <Route path="/product/:productId" element={<Productpage />} />
           <Route path="/cart" element={<Cart />} />
         </Routes>
       </div>
