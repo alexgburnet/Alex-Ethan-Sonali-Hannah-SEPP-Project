@@ -4,17 +4,9 @@ import './ItemCard.css';
 import { Link } from 'react-router-dom';
 
 function ItemCard(props) {
-    const state = {
-        imgSource: props.imgSource,
-        itemName: props.itemName,
-        itemDescription: props.itemDescription,
-        price: props.price,
-        productId: props.productId
-    };
-
 
     return (
-        <Link to="/product" state={state} className="ItemCardLink">
+        <Link to={`/product/${props.productId}`} className="ItemCardLink">
             <div className="ItemCard">
                 <div className="ItemCardImage">
                     <img src={props.imgSource} alt="Item" />
