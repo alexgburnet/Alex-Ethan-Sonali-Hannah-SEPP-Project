@@ -21,20 +21,28 @@ jobs:
     - name: Deploy to Azure VM
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
+          # Exit on error
+          set -e
+          
           # Navigate to project directory, else clone it
           cd Alex-Ethan-Sonali-Hannah-SEPP-Project || (git clone https://github.com/alexgburnet/Alex-Ethan-Sonali-Hannah-SEPP-Project.git && cd Alex-Ethan-Sonali-Hannah-SEPP-Project)
 
           # Pull latest changes
           git pull origin main
 
+          # Set environment variables
           echo "DB_USER=${DB_USER}" > .env
           echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
           echo "DB_NAME=${DB_NAME}" >> .env
 
-          chmod +x deploy.sh
-          
-          # Use run script
-          ./deploy.sh
+          # Navigate to Frontend and build the project
+          cd Frontend
+          npm run build
+          cd ..
+
+          # Stop and remove existing containers, then rebuild and restart
+          sudo docker-compose down -v
+          sudo docker-compose up --build -V
         EOF
       env:
         DB_USER: ${{ secrets.DB_USER }}
