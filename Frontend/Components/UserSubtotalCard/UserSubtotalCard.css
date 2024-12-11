@@ -1,49 +1,142 @@
+/* UserSubtotalCard.css */
+
+/* Container for the entire subtotal card */
 .subtotal-card {
     display: flex;
-    align-items: flex-start; 
+    align-items: flex-start;
     padding: 20px;
-    background-color: white;
+    background-color: #ffffff;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* .subtotal-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+} */
+
+/* User Information Section */
 .user-info {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
     text-align: center;
+    margin-right: 20px;
 }
 
 .profile-pic {
     width: 80px;
     height: 80px;
     border-radius: 50%;
+    object-fit: cover;
     margin-bottom: 10px;
+    border: 2px solid #f0f0f0;
 }
 
 .user-name {
     font-size: 1.2rem;
-    font-weight: bold;
+    font-weight: 600;
+    color: #333333;
 }
 
+/* Vertical Divider */
 .vertical-line {
     width: 2px;
     height: 100%;
-    background-color: #000000;
+    background-color: #e0e0e0;
     margin: 0 20px;
+    align-self: stretch;
 }
 
+/* Purchase Information Section */
 .purchase-info {
     flex: 4;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; 
+    justify-content: space-between;
 }
 
-.purchase-info p {
-    margin: 5px 0;
+/* Individual Purchase Item */
+.purchase-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.purchase-item:last-child {
+    border-bottom: none;
+}
+
+/* Item Details */
+.item-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-name {
     font-size: 1rem;
+    font-weight: 500;
+    color: #555555;
+    margin-bottom: 5px;
+}
+
+.item-quantity {
+    font-size: 0.9rem;
+    color: #777777;
+}
+
+/* Item Price */
+.item-price {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333333;
+    text-align: right;
+    min-width: 80px;
+}
+
+/* Total Price Section */
+.total-price {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-top: 15px;
+}
+
+.total-price strong {
+    font-size: 1.1rem;
+    color: #000000;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .subtotal-card {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .vertical-line {
+        width: 100%;
+        height: 2px;
+        margin: 15px 0;
+    }
+
+    .purchase-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .item-price {
+        text-align: left;
+        margin-top: 5px;
+    }
+
+    .total-price {
+        width: 100%;
+        justify-content: center;
+    }
 }
