@@ -40,6 +40,23 @@ def get_final_cost():
     rows = [dict(row) for row in result]
     return {'data': rows}
 
+## GET COST BEFORE PROMOTIONS
+## This endpoint will take in the following parameters:
+## - Order ID
+## This endpoint will return the cost of the order before applying any promotions
+## GET request to /get_cost_before_promotions?order_id=1
+@app.route("/get_cost_before_promotions")
+def get_cost_before_promotions():
+    # Get the order ID from the request
+    order_id = request.args.get('order_id')
+    if not order_id:
+        return {'error': 'Please provide an order ID'}, 400
+    
+    # TODO - Implement the logic to calculate the cost of the order before applying any promotions
+    result = db.engine.execute("SELECT * FROM your_table")
+    rows = [dict(row) for row in result]
+    return {'data': rows}
+
 ## ADD TO BASKET ENDPOINT
 ## This endpoint will take in the following parameters:
 ## - Order ID
