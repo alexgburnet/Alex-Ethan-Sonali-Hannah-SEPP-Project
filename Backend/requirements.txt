@@ -3,6 +3,7 @@ blinker==1.9.0
 click==8.1.7
 colorama==0.4.6
 Flask==3.1.0
+Flask-Cors==5.0.0
 Flask-RESTful==0.3.10
 Flask-SQLAlchemy==3.1.1
 importlib_metadata==8.5.0
