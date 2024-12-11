@@ -2,38 +2,53 @@ import React from 'react';
 
 import './UserSubtotalCard.css';
 
-/*purchase array should be of form
-const purchases = [
-        { item: 'Item 1', price: 10.00 },
-        { item: 'Item 2', price: 15.00 },
-        { item: 'Item 3', price: 20.00 },
+/* 
+    The `purchases` prop should be an array of objects with the following structure:
+    const purchases = [
+        { item: 'Item 1', price: 10.00, quantity: 2 },
+        { item: 'Item 2', price: 15.00, quantity: 1 },
+        { item: 'Item 3', price: 20.00, quantity: 3 },
     ];
 
-cards will not render if purchases is empty, so entire basket can be placed into this screen
- */
+    The component will render only if `purchases` is not empty.
+*/
 
 function UserSubtotalCard(props) {
-    const purchases = props.purchases;
-    if (purchases.length === 0) {
+    const { purchases, userPFP, userName } = props;
+
+    if (!purchases || purchases.length === 0) {
         return null;
     }
-    const totalPrice = purchases.reduce((total, purchase) => total + purchase.price, 0);
+
+    // Calculate total price considering quantity
+    const totalPrice = purchases.reduce((total, purchase) => {
+        return total + purchase.price * purchase.quantity;
+    }, 0);
+
     return (
         <div className="subtotal-card">
+            {/* User Information */}
             <div className="user-info">
-                <img src={props.userPFP} alt="User Profile" className="profile-pic" />
-                <p className="user-name">{props.userName}</p>
+                <img src={userPFP} alt="User Profile" className="profile-pic" />
+                <p className="user-name">{userName}</p>
             </div>
+
+            {/* Vertical Divider */}
             <div className="vertical-line"></div>
+
+            {/* Purchase Information */}
             <div className="purchase-info">
                 {purchases.map((purchase, index) => (
-                    <p key={index}>
-                        <p>{purchase.item}</p>
-                        <p>{purchase.price.toFixed(2)}</p>
-                    </p>
+                    <div className="purchase-item" key={index}>
+                        <span className="item-name">{purchase.item}</span>
+                        <span className="item-quantity">Qty: {purchase.quantity}</span>
+                        <span className="item-price">${(purchase.price * purchase.quantity).toFixed(2)}</span>
+                    </div>
                 ))}
                 <hr />
-                <p>Total: ${totalPrice.toFixed(2)}</p>
+                <div className="total-price">
+                    <strong>Total: ${totalPrice.toFixed(2)}</strong>
+                </div>
             </div>
         </div>
     );
@@ -43,9 +58,9 @@ UserSubtotalCard.defaultProps = {
     userPFP: "https://via.placeholder.com/150",
     userName: "John Doe",
     purchases: [
-        { item: 'Item 1', price: 10.00 },
-        { item: 'Item 2', price: 15.00 },
-        { item: 'Item 3', price: 20.00 },
+        { item: 'Item 1', price: 10.00, quantity: 2 },
+        { item: 'Item 2', price: 15.00, quantity: 1 },
+        { item: 'Item 3', price: 20.00, quantity: 3 },
     ]
 }
 
