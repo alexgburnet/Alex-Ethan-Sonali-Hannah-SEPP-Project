@@ -1,5 +1,5 @@
 set -e  # Exit on error
 
-docker-compose down -v
+sudo docker-compose down -v
 
-docker compose up --build -V 
+sudo docker compose up --build -V 
