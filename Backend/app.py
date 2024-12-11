@@ -36,6 +36,8 @@ def get_final_cost():
     if not order_id:
         return {'error': 'Please provide an order ID'}, 400
     
+    print(request.args)
+    
     return jsonify({
         "final_cost": 100.00 # INCLUDE DELIVERY COST
     })
@@ -72,6 +74,8 @@ def add_to_basket():
     product_id = data.get('product_id')
     quantity = data.get('quantity')
     user_id = data.get('user_id')
+
+    print(data)
 
     # Check if any required field is missing
     if not order_id or not product_id or not quantity or not user_id:
@@ -114,6 +118,8 @@ def get_product_info():
     if not product_id:
         return {'error': 'Please provide a product ID'}, 400
     
+    print(request.args)
+    
     return jsonify({
         "description": "This is a more in depth description of the product.",
     })
@@ -134,6 +140,8 @@ def get_time_due():
     order_id = request.args.get('order_id')
     if not order_id:
         return {'error': 'Please provide an order ID'}, 400
+    
+    print(request.args)
     
     try:
         due_time = datetime.utcnow() + timedelta(minutes=30)  # Replace with actual logic
@@ -162,6 +170,8 @@ def search_result():
     search_query = request.args.get('search_query')
     if not search_query:
         return {'error': 'Please provide a search query'}, 400
+    
+    print(request.args)
     
     items = [
         {
@@ -227,6 +237,8 @@ def confirm_order():
     if not data:
         return {'error': 'Please provide the required details'}, 400
     
+    print(data)
+    
     # DONT FORGET - take timestamp here and add this to databse too
 
     # Get the order ID and user ID from the JSON body
@@ -259,6 +271,8 @@ def check_if_order_confirmed():
     if not order_id:
         return {'error': 'Please provide an order ID'}, 400
     
+    print(request.args)
+    
     return jsonify({
         "confirmed": False
     }), 200
@@ -282,6 +296,8 @@ def user_is_host():
     if not order_id or not user_id:
         return {'error': 'Please provide the required details'}, 400
     
+    print(request.args)
+
     return jsonify({
         "isHost": True
     }), 200
@@ -305,6 +321,9 @@ def get_user_basket():
     if not user_id or not order_id:
         return {'error': 'Please provide the required details'}, 400
     
+
+    print(request.args)
+
     userCarts = [
         {
             "userName": "Your Name",  # Current user's name
@@ -351,6 +370,8 @@ def get_delivery_cost():
     order_id = request.args.get('order_id')
     if not order_id:
         return {'error': 'Please provide an order ID'}, 400
+    
+    print(request.args)
     
     return jsonify({
         "total": 5.99,
