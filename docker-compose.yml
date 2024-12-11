@@ -31,5 +31,17 @@ services:
     env_file:
       - .env  # Load environment variables from .env
 
+  frontend:
+    build:
+      context: ./Frontend
+    platform: linux/arm64
+    container_name: react_frontend_container
+    ports:
+      - "3000:3000"  # Map host port 3000 to Vite's default port 5173
+    volumes:
+      - ./Frontend:/app  # Mount the frontend directory for live updates
+    stdin_open: true
+    tty: true
+
 volumes:
   pg_data:
