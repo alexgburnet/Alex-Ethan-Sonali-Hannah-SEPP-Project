@@ -28,6 +28,7 @@ function Cart () {
     const [confirming, setConfirming] = useState(false); // New state for confirmation loading
     const [timeDue, setTimeDue] = useState(null); // Stores the due timestamp
     const [timeLeft, setTimeLeft] = useState(null); // Stores the remaining time in seconds
+    const [finalCost, setFinalCost] = useState(null); // State to store the final cost
 
     // Utility function to format time in hh:mm:ss
     const formatTime = (seconds) => {
@@ -55,8 +56,6 @@ function Cart () {
             if (response.data && response.data.success) {
                 setConfirmed(true); // Update confirmed state on success
                 setOrderConfirmed(true); // Reflect that the order is now confirmed
-                // Optionally, you might want to refetch the confirmation status
-                // fetchData();
             } else {
                 setError(response.data.message || "Failed to confirm the order.");
             }
@@ -189,6 +188,31 @@ function Cart () {
         return () => clearInterval(timer);
     }, [confirmed, order_id]);
 
+    // Function to fetch the final cost
+    const fetchFinalCost = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/get_final_cost`, {
+                params: { order_id }
+            });
+
+            if (response.data && response.data.final_cost !== undefined) {
+                setFinalCost(response.data.final_cost);
+            } else {
+                setError("Invalid response from get_final_cost API.");
+            }
+        } catch (err) {
+            console.error("Error fetching final cost:", err);
+            setError("Failed to fetch final cost.");
+        }
+    };
+
+    // Fetch final cost when the order is confirmed
+    useEffect(() => {
+        if (orderConfirmed) {
+            fetchFinalCost();
+        }
+    }, [orderConfirmed, order_id]);
+
     // Function to calculate Subtotal based on the first userCart (current user)
     const calculateSubtotal = () => {
         if (userCarts.length === 0) return 0;
@@ -210,7 +234,7 @@ function Cart () {
     // Calculate Subtotal and Shipping based on fetched data
     const subtotal = calculateSubtotal();
     const totalItems = calculateTotalItems();
-    const shipping = deliveryCost.individual * totalItems; // Correct shipping calculation
+    const shipping = deliveryCost.individual; // Correct shipping calculation
     const people = deliveryCost.people;
     const total = subtotal + shipping; // Correct total calculation
 
@@ -284,9 +308,17 @@ function Cart () {
                     <div className="user-subtotal">
                         <p><strong>Subtotal:</strong> £{subtotal.toFixed(2)}</p>
                         <p>
-                            <strong>Shipping:</strong> £{shipping.toFixed(2)} ({deliveryCost.total} / {deliveryCost.people})
+                            <strong>Shipping:</strong> £{deliveryCost.individual.toFixed(2)} ({deliveryCost.total} / {deliveryCost.people})
                         </p>
                         <hr />
+                        <p><strong>Total:</strong> £{total.toFixed(2)}</p>
+                        {orderConfirmed && finalCost !== null && (
+                            <div className='final-cost'>
+                                <p><strong>Discounts:</strong> £{(total - finalCost).toFixed(2)}</p>
+                                <hr />
+                                <p><strong>Final Cost:</strong> £{(finalCost).toFixed(2)}</p>
+                            </div>
+                        )}
                         <div className='button-container'>
                             {isHost ? 
                                 <CustomButton 
@@ -314,8 +346,6 @@ function Cart () {
                                 <p>Time to pay: {formatTime(timeLeft)}</p>
                             </div>
                         )}
-                        <hr />
-                        <p><strong>Total:</strong> £{total.toFixed(2)}</p>
                     </div>
                 </div>
             </div>
