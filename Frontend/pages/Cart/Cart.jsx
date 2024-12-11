@@ -354,6 +354,10 @@ function Cart () {
                             </div>
                         )}
                     </div>
+                    <div className='link-container'>
+                        <p><strong>Share this link to add others:</strong></p>
+                        <p>http://172.167.146.215/?order={order_id}</p>
+                    </div>
                 </div>
             </div>
         </div>
