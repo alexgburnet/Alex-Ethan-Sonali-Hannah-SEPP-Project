@@ -3,6 +3,7 @@ import os
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from datetime import datetime, timedelta
 
 load_dotenv()
 
@@ -41,24 +42,6 @@ def get_final_cost():
     #return {'data': rows}
     #recieve order_id and user_id and return a float
     #just do percent-off promotions
-
-## GET COST BEFORE PROMOTIONS
-## This endpoint will take in the following parameters:
-## - Order ID
-## This endpoint will return the cost of the order before applying any promotions
-## GET request to /get_cost_before_promotions?order_id=1
-@app.route("/get_cost_before_promotions")
-def get_cost_before_promotions():
-    # Get the order ID from the request
-    order_id = request.args.get('order_id')
-    if not order_id:
-        return {'error': 'Please provide an order ID'}, 400
-    
-    # TODO - Implement the logic to calculate the cost of the order before applying any promotions
-    result = db.engine.execute("SELECT * FROM your_table")
-    rows = [dict(row) for row in result]
-    return {'data': rows}
-    #same as above dont apply promotions
 
 ## ADD TO BASKET ENDPOINT
 ## This endpoint will take in the following parameters:
@@ -141,17 +124,27 @@ def get_product_info():
 ## - Order ID
 ## This endpoint will return the time left for the order to be confirmed by all 
 ## GET request to /get_time_left?order_id=1
-@app.route("/get_time_left")
-def get_time_left():
+@app.route("/get_time_due")
+def get_time_due():
     # Get the order ID from the request
     order_id = request.args.get('order_id')
     if not order_id:
         return {'error': 'Please provide an order ID'}, 400
     
+    try:
+        due_time = datetime.utcnow() + timedelta(minutes=30)  # Replace with actual logic
+        # Convert to ISO format string
+        due_time_iso = due_time.isoformat() + 'Z'  # Adding 'Z' to indicate UTC time
+        return jsonify({'success': True, 'time_due': due_time_iso}), 200
+    except Exception as e:
+        print(f"Error fetching time due: {e}")
+        return jsonify({'success': False, 'message': 'An error occurred while fetching time due.'}), 500
+
+
     # TODO - Implement the logic to calculate the time left for the order to be confirmed by all
-    result = db.engine.execute("SELECT * FROM your_table")
-    rows = [dict(row) for row in result]
-    return {'data': rows}
+    #result = db.engine.execute("SELECT * FROM your_table")
+    #rows = [dict(row) for row in result]
+    #return {'data': rows}
     #send timestamp
 
 ## SEARCH RESULT ENDPOINT
@@ -230,6 +223,8 @@ def confirm_order():
     if not data:
         return {'error': 'Please provide the required details'}, 400
     
+    # DONT FORGET - take timestamp here and add this to databse too
+
     # Get the order ID and user ID from the JSON body
     order_id = data.get('order_id')
     user_id = data.get('user_id')
@@ -355,7 +350,8 @@ def get_delivery_cost():
     
     return jsonify({
         "total": 5.99,
-        "individual": 1.99
+        "individual": 1.99,
+        "people": 3 # Number of people in the order
     })
     # TODO - Implement the logic to calculate the delivery cost of the order
     #result = db.engine.execute("SELECT * FROM your_table")
