@@ -121,7 +121,10 @@ def get_product_info():
     print(request.args)
     
     return jsonify({
+        "title": f'Product Title {product_id}',
+        "price": 19.99,
         "description": "This is a more in depth description of the product.",
+
     })
     # TODO - Implement the logic to retrieve the information of the product
     #result = db.engine.execute("SELECT * FROM your_table")
