@@ -234,12 +234,15 @@ def confirm_order():
     order_id = data.get('order_id')
     user_id = data.get('user_id')
     if not order_id or not user_id:
-        return {'error': 'Please provide the required details'}, 400
+        return jsonify({'success': False, 'message': 'Order ID and User ID are required'}), 400
     
+    return jsonify({'success': True, 'message': 'Order confirmed successfully'}), 200
+    # if not successful
+    return jsonify({'success': False, 'message': 'An error occurred while confirming the order.'}), 500
     # TODO - Implement the logic to confirm the order for the user
-    result = db.engine.execute("SELECT * FROM your_table")
-    rows = [dict(row) for row in result]
-    return {'data': rows}
+    #result = db.engine.execute("SELECT * FROM your_table")
+    #rows = [dict(row) for row in result]
+    #return {'data': rows}
     #set status to confirm
     #check timestamp for order id
         #if true copy the timestamp
@@ -250,17 +253,20 @@ def confirm_order():
 ## - Order ID
 ## This endpoint will check if the order is confirmed
 ## GET request to /check_if_order_confirmed?order_id=1
-@app.route("/check_if_order_confirmed")
+@app.route("/check_if_order_confirmed", methods=['GET'])
 def check_if_order_confirmed():
     # Get the order ID from the request
     order_id = request.args.get('order_id')
     if not order_id:
         return {'error': 'Please provide an order ID'}, 400
     
+    return jsonify({
+        "confirmed": False
+    }), 200
     # TODO - Implement the logic to check if the order is confirmed
-    result = db.engine.execute("SELECT * FROM your_table")
-    rows = [dict(row) for row in result]
-    return {'data': rows}
+    #result = db.engine.execute("SELECT * FROM your_table")
+    #rows = [dict(row) for row in result]
+    #return {'data': rows}
     #check order id is true for everything return true or false ('data' : true) etc.
 
 ## USER IS ORDER HOST ENDPOINT
