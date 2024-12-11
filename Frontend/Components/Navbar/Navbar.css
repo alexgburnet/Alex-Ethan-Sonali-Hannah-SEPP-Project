@@ -45,6 +45,10 @@ header {
     text-decoration: none;
 }
 
+.LogoutIcon{
+    margin-left: 20px;
+}
+
 header svg{
     width: 32px;
     height:32px;
