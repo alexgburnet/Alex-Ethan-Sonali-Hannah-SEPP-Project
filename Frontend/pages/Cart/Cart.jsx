@@ -1,13 +1,13 @@
 // Cart.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // Using axios for HTTP requests
+import Cookies from 'js-cookie';
 import CustomButton from '../../Components/CustomButton/CustomButton';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import UserSubtotalCard from '../../Components/UserSubtotalCard/UserSubtotalCard';
 import AddressForm from '../../Components/AddressForm/AddressForm';
 import './Cart.css';
 import API_URL from '../../config';
-import { useLocation } from 'react-router-dom'; // Import useLocation if using query params
 
 function Cart () {
 
@@ -76,10 +76,17 @@ function Cart () {
     };
 
     // Extract user_id and order_id from query params or other sources
-    const location = useLocation();
-    const query = new URLSearchParams(location.search);
-    const user_id = query.get('user_id') || 'xxx'; // Replace 'xxx' with actual user_id or handle accordingly
-    const order_id = query.get('order_id') || 'xxx'; // Replace 'xxx' with actual order_id or handle accordingly
+    const user_id = Cookies.get('user_id'); // Ensure 'user_id' is the correct cookie key
+    const order_id = Cookies.get('order_id'); // Ensure 'order_id' is the correct cookie key
+
+    useEffect(() => {
+        if (!user_id || !order_id) {
+            setError("User ID or Order ID is missing. Please log in again.");
+            setLoading(false);
+            // Optionally, redirect to login page
+            // window.location.href = '/login';
+        }
+    }, [user_id, order_id]);
 
     // Function to fetch user basket, delivery cost, host status, and order confirmation status from the API
     const fetchData = async () => {
