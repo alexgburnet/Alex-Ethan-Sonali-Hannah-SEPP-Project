@@ -42,7 +42,7 @@ jobs:
 
           # Stop and remove existing containers, then rebuild and restart
           sudo docker-compose down -v
-          sudo docker-compose up --build -V
+          sudo docker-compose up --build -V -d
         EOF
       env:
         DB_USER: ${{ secrets.DB_USER }}
