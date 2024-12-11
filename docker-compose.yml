@@ -16,20 +16,5 @@ services:
     env_file:
       - .env
 
-  flask-app:
-    build:
-      context: ./Backend  # Build from the current directory
-    container_name: flask_app_container
-    environment:
-      FLASK_ENV: development
-    ports:
-      - "5001:5001"
-    depends_on:
-      - postgres
-    volumes:
-      - ./Backend:/app  # Mount the current directory to /app in the container
-    env_file:
-      - .env  # Load environment variables from .env
-
 volumes:
   pg_data:

@@ -18,7 +18,10 @@ db = SQLAlchemy(app)
 
 @app.route("/")
 def hello_world():
-    return "Hello World!"
+    # EXAMPLE of a SELECT query to retrieve data from a table
+    result = db.engine.execute("SELECT * FROM your_table")
+    rows = [dict(row) for row in result]
+    return {'data': rows}
 
 ## GET FINAL COST ENDPOINT
 ## This endpoint will take in the following parameters:
@@ -245,5 +248,5 @@ def get_full_basket():
 
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001)
+if __name__ == "__main__":
+    app.run()
