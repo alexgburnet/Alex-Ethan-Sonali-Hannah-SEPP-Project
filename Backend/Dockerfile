@@ -11,7 +11,7 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose the port for Flask
-EXPOSE 5000
+EXPOSE 5001
 
 # Define the entry point for the container
 CMD ["python", "app.py"]
