@@ -269,7 +269,7 @@ def check_if_order_confirmed():
 ## - User ID
 ## This endpoint will check if the user is the host of the order
 ## GET request to /user_is_host
-@app.route("/user_is_host")
+@app.route("/user_is_host", methods=['GET'])
 def user_is_host():
     # Get the order ID and user ID from the request
     order_id = request.args.get('order_id')
@@ -277,10 +277,13 @@ def user_is_host():
     if not order_id or not user_id:
         return {'error': 'Please provide the required details'}, 400
     
+    return jsonify({
+        "isHost": True
+    }), 200
     # TODO - Implement the logic to check if the user is the host of the order
-    result = db.engine.execute("SELECT * FROM your_table")
-    rows = [dict(row) for row in result]
-    return {'data': rows}
+    #result = db.engine.execute("SELECT * FROM your_table")
+    #rows = [dict(row) for row in result]
+    #return {'data': rows}
     #return true or false 
 
 ## GET USER BASKET ENDPOINT
@@ -297,14 +300,62 @@ def get_user_basket():
     if not user_id or not order_id:
         return {'error': 'Please provide the required details'}, 400
     
+    userCarts = [
+        {
+            "userName": "Your Name",  # Current user's name
+            "userPFP": "https://via.placeholder.com/150",
+            "purchases": [
+                { "item": "Wireless Mouse", "price": 25.99, "quantity": 2 },
+                { "item": "Keyboard", "price": 45.50, "quantity": 1 },
+                { "item": "USB-C Cable", "price": 10.00, "quantity": 3 },
+            ]
+        },
+        {
+            "userName": "Alice Johnson",
+            "userPFP": "https://via.placeholder.com/150",
+            "purchases": [
+                { "item": "Monitor", "price": 150.00, "quantity": 1 },
+                { "item": "HDMI Cable", "price": 12.99, "quantity": 2 },
+            ]
+        },
+        {
+            "userName": "Bob Smith",
+            "userPFP": "https://via.placeholder.com/150",
+            "purchases": [
+                { "item": "Laptop Stand", "price": 30.00, "quantity": 1 },
+                { "item": "Webcam", "price": 60.00, "quantity": 1 },
+                { "item": "Desk Lamp", "price": 20.00, "quantity": 2 },
+            ]
+        },
+        # Add more user carts as needed
+    ]
+    
+    # In a real application, filter or retrieve userCarts based on user_id and order_id
+    return jsonify({"userCarts": userCarts}), 200
+    
     # TODO - Implement the logic to retrieve the basket of the user
-    result = db.engine.execute("SELECT * FROM your_table")
-    rows = [dict(row) for row in result]
-    return {'data': rows}
+    # result = db.engine.execute("SELECT * FROM your_table")
+    # rows = [dict(row) for row in result]
+    # return {'data': rows}
     #return orders table as relevant and join it to item table
     #item name, quantity, price, promotion type, url, id
 
-
+@app.route("/get_delivery_cost", methods=['GET'])
+def get_delivery_cost():
+    # Get the order ID from the request
+    order_id = request.args.get('order_id')
+    if not order_id:
+        return {'error': 'Please provide an order ID'}, 400
+    
+    return jsonify({
+        "total": 5.99,
+        "individual": 1.99
+    })
+    # TODO - Implement the logic to calculate the delivery cost of the order
+    #result = db.engine.execute("SELECT * FROM your_table")
+    #rows = [dict(row) for row in result]
+    #return {'data': rows}
+    #return delivery cost
 
 
 
