@@ -27,9 +27,9 @@ jobs:
           # Pull latest changes
           git pull origin main
 
-          echo "DB_USER=${DB_USER}" > Database/.env
-          echo "DB_PASSWORD=${DB_PASSWORD}" >> Database/.env
-          echo "DB_NAME=${DB_NAME}" >> Database/.env
+          echo "DB_USER=${DB_USER}" > .env
+          echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
+          echo "DB_NAME=${DB_NAME}" >> .env
 
           chmod +x deploy.sh
           
