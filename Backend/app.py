@@ -85,7 +85,7 @@ def add_to_basket():
     if order_id == '-1':
         # Generate a new order_id since -1 was received
         new_order_id = 5  # Generate a new unique order ID
-        # Return JSON with the new order_id
+        # Return JSON with the new order_id - MAKE THIS PERSON HOST
         return jsonify({
             'success': True,
             'message': 'Order ID not found. New order ID generated.',
@@ -372,7 +372,7 @@ def get_delivery_cost():
         return {'error': 'Please provide an order ID'}, 400
     
     print(request.args)
-    
+
     return jsonify({
         "total": 5.99,
         "individual": 1.99,
