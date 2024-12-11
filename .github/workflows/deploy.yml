@@ -37,6 +37,7 @@ jobs:
 
           # Navigate to Frontend and build the project
           cd Frontend
+          npm install
           npm run build
           cd ..
 
