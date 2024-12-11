@@ -6,6 +6,7 @@ SET default_tablespace = '';
 -- Create tables
 CREATE TABLE public.item (
     item_id integer NOT NULL,
+    item_name text,
     supermarket_id integer,
     item_cost numeric(10,2),
     promotion_id integer,
@@ -36,10 +37,10 @@ CREATE TABLE public.user (
 );
 
 -- Populate the database with dummy data
-INSERT INTO public.item (item_id, supermarket_id, item_cost, promotion_id, promotion_type, item_photo_url) VALUES
-(47, 2, 2.50, 0, 0, 'https://www.xx.com'),
-(23, 5, 4.00, 1, 10, 'https://www.yy.co.uk'),
-(19, 3, 5.75, 10, 101, 'https://www.zz.com');
+INSERT INTO public.item (item_id, item_name, supermarket_id, item_cost, promotion_id, promotion_type, item_photo_url) VALUES
+(47, 'milk', 2, 2.50, 0, 0, 'https://www.xx.com'),
+(23, 'eggs', 5, 4.00, 1, 10, 'https://www.yy.co.uk'),
+(19, 'bread', 3, 5.75, 10, 101, 'https://www.zz.com');
 
 INSERT INTO public.shared_order (order_id, host_email, order_confirmed, time_confirmed) VALUES
 (0, 'sxp1114@student.bham.ac.uk', false, NULL);
