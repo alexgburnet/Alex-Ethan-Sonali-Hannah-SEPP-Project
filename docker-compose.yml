@@ -31,5 +31,16 @@ services:
     env_file:
       - .env  # Load environment variables from .env
 
+  node-app:
+    build:
+      context: ./Frontend  # Adjust the path to your Node.js Dockerfile directory
+    container_name: node_app_container
+    ports:
+      - "3000:3000"
+    depends_on:
+      - flask-app
+    volumes:
+      - ./Frontend:/app  # Mount the Frontend directory to /app in the container
+
 volumes:
   pg_data:
