@@ -1,7 +1,8 @@
 from dotenv import load_dotenv
 import os
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 load_dotenv()
 
@@ -15,7 +16,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@l
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+CORS(app)
 
+# Test to see if application is accessible
 @app.route("/")
 def hello_world():
     return "Hello World!"
@@ -33,9 +36,9 @@ def get_final_cost():
         return {'error': 'Please provide an order ID'}, 400
     
     # TODO - Implement the logic to calculate the final cost of the order
-    result = db.engine.execute("SELECT * FROM your_table")
-    rows = [dict(row) for row in result]
-    return {'data': rows}
+    #result = db.engine.execute("SELECT * FROM your_table")
+    #rows = [dict(row) for row in result]
+    #return {'data': rows}
     #recieve order_id and user_id and return a float
     #just do percent-off promotions
 
@@ -76,20 +79,38 @@ def add_to_basket():
     # Get the JSON body from the request
     data = request.get_json()
     if not data:
-        return {'error': 'Please provide the required details'}, 400
-    
-    # Get the order ID, product ID, quantity and user ID from the JSON body
+        return jsonify({'error': 'Please provide the required details'}), 400
+
     order_id = data.get('order_id')
     product_id = data.get('product_id')
     quantity = data.get('quantity')
     user_id = data.get('user_id')
+
+    # Check if any required field is missing
     if not order_id or not product_id or not quantity or not user_id:
-        return {'error': 'Please provide the required details'}, 400
+        return jsonify({'error': 'Please provide the required details'}), 400
+
+    # Check if the order_id is -1
+    if order_id == '-1':
+        # Generate a new order_id since -1 was received
+        new_order_id = 5  # Generate a new unique order ID
+        # Return JSON with the new order_id
+        return jsonify({
+            'success': True,
+            'message': 'Order ID not found. New order ID generated.',
+            'new_order_id': new_order_id,
+        }), 200
+
+    # If order_id is not -1, use the provided order_id and return a different response
+    return jsonify({
+        'success': True,
+        'message': 'Order ID received and processed.'
+    }), 200
     
     # TODO - Implement the logic to add the product to the basket
-    result = db.engine.execute("SELECT * FROM your_table")
-    rows = [dict(row) for row in result]
-    return {'data': rows}
+    #result = db.engine.execute("SELECT * FROM your_table")
+    #rows = [dict(row) for row in result]
+    #return {'data': rows}
     #check database is not empty - if it is, call a subprogram to create an order
     #needs to check that verification is set to false
     #add information to orders table
@@ -106,10 +127,13 @@ def get_product_info():
     if not product_id:
         return {'error': 'Please provide a product ID'}, 400
     
+    return jsonify({
+        "description": "This is a more in depth description of the product.",
+    })
     # TODO - Implement the logic to retrieve the information of the product
-    result = db.engine.execute("SELECT * FROM your_table")
-    rows = [dict(row) for row in result]
-    return {'data': rows}
+    #result = db.engine.execute("SELECT * FROM your_table")
+    #rows = [dict(row) for row in result]
+    #return {'data': rows}
     #return everything in the item table
 
 ## GET TIME LEFT ENDPOINT
@@ -142,10 +166,50 @@ def search_result():
     if not search_query:
         return {'error': 'Please provide a search query'}, 400
     
+    items = [
+        {
+            "imgSource": "https://via.placeholder.com/150",
+            "itemName": "Item 1",
+            "itemDescription": "Description for Item 1. This is a great product.",
+            "price": 19.99,
+            "productId": 1
+        },
+        {
+            "imgSource": "https://via.placeholder.com/150",
+            "itemName": "Item 2",
+            "itemDescription": "Description for Item 2. Another fantastic item.",
+            "price": 29.99,
+            "productId": 2
+        },
+        {
+            "imgSource": "https://via.placeholder.com/150",
+            "itemName": "Item 3",
+            "itemDescription": "Description for Item 3. You won't regret buying this.",
+            "price": 49.99,
+            "productId": 3
+        },
+        {
+            "imgSource": "https://via.placeholder.com/150",
+            "itemName": "Item 4",
+            "itemDescription": "Description for Item 4. Best value for your money.",
+            "price": 9.99,
+            "productId": 4
+        },
+        {
+            "imgSource": "https://via.placeholder.com/150",
+            "itemName": "Item 5",
+            "itemDescription": "Description for Item 5. Top quality product.",
+            "price": 39.99,
+            "productId": 5
+        }
+    ]
+
+    return {'items': items}
+    
     # TODO - Implement the logic to search the items based on the query
-    result = db.engine.execute("SELECT * FROM your_table")
-    rows = [dict(row) for row in result]
-    return {'data': rows}
+    #result = db.engine.execute("SELECT * FROM your_table")
+    #rows = [dict(row) for row in result]
+    #return {'data': rows}
     #use soundex to search
     #return all from item table 
 

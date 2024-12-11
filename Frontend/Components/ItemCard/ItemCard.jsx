@@ -8,7 +8,8 @@ function ItemCard(props) {
         imgSource: props.imgSource,
         itemName: props.itemName,
         itemDescription: props.itemDescription,
-        price: props.price
+        price: props.price,
+        productId: props.productId
     };
 
 
