@@ -22,10 +22,25 @@ function Cart () {
     });
     
     const [userCarts, setUserCarts] = useState([]); // State to store fetched user carts
-    const [deliveryCost, setDeliveryCost] = useState({ total: 0, individual: 0 }); // State to store delivery cost
+    const [deliveryCost, setDeliveryCost] = useState({ total: 0, individual: 0, people: 0 }); // Updated to include 'people'
     const [loading, setLoading] = useState(true);   // State to manage loading
     const [error, setError] = useState(null);       // State to manage errors
     const [confirming, setConfirming] = useState(false); // New state for confirmation loading
+    const [timeDue, setTimeDue] = useState(null); // Stores the due timestamp
+    const [timeLeft, setTimeLeft] = useState(null); // Stores the remaining time in seconds
+
+    // Utility function to format time in hh:mm:ss
+    const formatTime = (seconds) => {
+        const hrs = Math.floor(seconds / 3600);
+        const mins = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+
+        const paddedHrs = hrs.toString().padStart(2, '0');
+        const paddedMins = mins.toString().padStart(2, '0');
+        const paddedSecs = secs.toString().padStart(2, '0');
+
+        return `${paddedHrs}:${paddedMins}:${paddedSecs}`;
+    };
 
     const pressHandler = async () => {
         setConfirming(true); // Start confirmation loading
@@ -39,8 +54,8 @@ function Cart () {
 
             if (response.data && response.data.success) {
                 setConfirmed(true); // Update confirmed state on success
+                setOrderConfirmed(true); // Reflect that the order is now confirmed
                 // Optionally, you might want to refetch the confirmation status
-                // to ensure synchronization
                 // fetchData();
             } else {
                 setError(response.data.message || "Failed to confirm the order.");
@@ -94,10 +109,11 @@ function Cart () {
             }
 
             // Handle delivery cost response
-            if (deliveryResponse.data && deliveryResponse.data.total !== undefined && deliveryResponse.data.individual !== undefined) {
+            if (deliveryResponse.data && deliveryResponse.data.total !== undefined && deliveryResponse.data.individual !== undefined && deliveryResponse.data.people !== undefined) {
                 setDeliveryCost({
                     total: deliveryResponse.data.total,
-                    individual: deliveryResponse.data.individual
+                    individual: deliveryResponse.data.individual,
+                    people: deliveryResponse.data.people
                 });
             } else {
                 setError("Invalid response from delivery cost API.");
@@ -132,6 +148,47 @@ function Cart () {
         fetchData();
     }, [user_id, order_id]); // Dependency array includes user_id and order_id
 
+    // Countdown Timer Effect
+    useEffect(() => {
+        let timer;
+
+        const fetchTimeDue = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/get_time_due`, {
+                    params: { order_id }
+                });
+
+                if (response.data && response.data.time_due) {
+                    const dueTime = new Date(response.data.time_due);
+                    setTimeDue(dueTime);
+                    const initialTimeLeft = Math.floor((dueTime - new Date()) / 1000);
+                    setTimeLeft(initialTimeLeft > 0 ? initialTimeLeft : 0);
+                } else {
+                    setError("Invalid response from get_time_due API.");
+                }
+            } catch (err) {
+                console.error("Error fetching time due:", err);
+                setError("Failed to fetch time due.");
+            }
+        };
+
+        if (confirmed) {
+            fetchTimeDue();
+
+            timer = setInterval(() => {
+                setTimeLeft(prevTimeLeft => {
+                    if (prevTimeLeft <= 1) {
+                        clearInterval(timer);
+                        return 0;
+                    }
+                    return prevTimeLeft - 1;
+                });
+            }, 1000);
+        }
+
+        return () => clearInterval(timer);
+    }, [confirmed, order_id]);
+
     // Function to calculate Subtotal based on the first userCart (current user)
     const calculateSubtotal = () => {
         if (userCarts.length === 0) return 0;
@@ -154,6 +211,7 @@ function Cart () {
     const subtotal = calculateSubtotal();
     const totalItems = calculateTotalItems();
     const shipping = deliveryCost.individual * totalItems; // Correct shipping calculation
+    const people = deliveryCost.people;
     const total = subtotal + shipping; // Correct total calculation
 
     // Conditional rendering based on loading and error states
@@ -226,8 +284,7 @@ function Cart () {
                     <div className="user-subtotal">
                         <p><strong>Subtotal:</strong> £{subtotal.toFixed(2)}</p>
                         <p>
-                            <strong>Shipping:</strong> £{shipping.toFixed(2)} 
-                            {deliveryCost.individual ? ` (£${deliveryCost.individual.toFixed(2)} x ${totalItems})` : ''}
+                            <strong>Shipping:</strong> £{shipping.toFixed(2)} ({deliveryCost.total} / {deliveryCost.people})
                         </p>
                         <hr />
                         <div className='button-container'>
@@ -246,21 +303,15 @@ function Cart () {
                             }
                         </div>
 
-                        {orderConfirmed && (
-                            <div className='confirmation-message'>
-                                <p>Your order has been confirmed!</p>
-                            </div>
-                        )}
-
                         {error && (
                             <div className='error-message'>
                                 <p>Error: {error}</p>
                             </div>
                         )}
 
-                        {confirmed && (
+                        {confirmed && timeLeft > 0 && (
                             <div className='timer'>
-                                <p>hh:mm to pay</p>
+                                <p>Time to pay: {formatTime(timeLeft)}</p>
                             </div>
                         )}
                         <hr />
