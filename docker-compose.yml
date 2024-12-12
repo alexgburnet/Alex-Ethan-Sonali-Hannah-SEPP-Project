@@ -10,6 +10,8 @@ services:
       POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
+    networks:
+      - my_network
     volumes:
       - pg_data:/var/lib/postgresql/data
       - ./Database/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -24,6 +26,8 @@ services:
       FLASK_ENV: development
     ports:
       - "5001:5001"
+    networks:
+      - my_network
     depends_on:
       - postgres
     volumes:
@@ -44,3 +48,7 @@ services:
 
 volumes:
   pg_data:
+
+networks:
+  my_network:
+    driver: bridge
