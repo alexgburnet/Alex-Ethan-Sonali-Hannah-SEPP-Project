@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from datetime import datetime, timedelta
+from sqlalchemy import text
 
 load_dotenv()
 
@@ -13,7 +14,7 @@ db_name = os.getenv('DB_NAME', 'default_db')
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@localhost:5432/{db_name}'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@postgres:5432/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -22,7 +23,13 @@ CORS(app)
 # Test to see if application is accessible
 @app.route("/")
 def hello_world():
-    return "Hello World!"
+    try:
+        with db.engine.connect() as connection:
+            result = connection.execute(text("SELECT * FROM item"))
+            rows = [dict(row._mapping) for row in result.fetchall()]
+        return {'data': rows}
+    except Exception as e:
+        return {'error': str(e)}, 500
 
 ## GET FINAL COST ENDPOINT
 ## This endpoint will take in the following parameters:
