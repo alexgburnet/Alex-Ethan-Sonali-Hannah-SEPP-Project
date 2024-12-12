@@ -43,11 +43,24 @@ def get_final_cost():
     if not order_id:
         return {'error': 'Please provide an order ID'}, 400
     
-    print(request.args)
-    
-    return jsonify({
-        "final_cost": 100.00 # INCLUDE DELIVERY COST
-    })
+    try:
+        with db.engine.connect() as connection:
+            itemName = connection.execute(text("SELECT item_name FROM item WHERE item.item_id == product_id"))
+            itemPrice = connection.execute(text("SELECT item_cost FROM item WHERE item.item_id == product_id"))
+            itemPhoto = connection.execute(text("SELECT item_photo_url from item WHERE item.item_id == product_id"))
+        #fetch all prices
+        #apply any promotions
+        #add total
+        #fetch the number of unique users for each order
+        #add set fee split
+
+        return jsonify({
+            "final_cost": finalCost
+        })
+    except Exception as e:
+        return {'error': str(e)}, 500
+
+
     
     # TODO - Implement the logic to calculate the final cost of the order
     #result = db.engine.execute("SELECT * FROM your_table")
@@ -125,19 +138,22 @@ def get_product_info():
     if not product_id:
         return {'error': 'Please provide a product ID'}, 400
     
-    print(request.args)
-    
-    return jsonify({
-        "title": f'Product Title {product_id}',
-        "price": 19.99,
-        "description": "This is a more in depth description of the product.",
+    try:
+        with db.engine.connect() as connection:
+            itemName = connection.execute(text("SELECT item_name FROM item WHERE item.item_id == product_id"))
+            itemPrice = connection.execute(text("SELECT item_cost FROM item WHERE item.item_id == product_id"))
+            itemPhoto = connection.execute(text("SELECT item_photo_url from item WHERE item.item_id == product_id"))
+            #TODO what about sending the promotion type? you have not included this in the 'expected data'
+            # are you wanting this to be calculated in the price or right at the end 
+            #thus far i have just sent the item price as stored in the database
 
-    })
-    # TODO - Implement the logic to retrieve the information of the product
-    #result = db.engine.execute("SELECT * FROM your_table")
-    #rows = [dict(row) for row in result]
-    #return {'data': rows}
-    #return everything in the item table
+        return jsonify({
+            "title": itemName,
+            "price": itemPrice,
+            "photoURL": itemPhoto,
+        })
+    except Exception as e:
+        return {'error': str(e)}, 500
 
 ## GET TIME LEFT ENDPOINT
 ## This endpoint will take in the following parameters:
