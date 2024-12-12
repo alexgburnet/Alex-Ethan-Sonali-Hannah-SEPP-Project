@@ -139,17 +139,22 @@ def get_product_info():
         return {'error': 'Please provide a product ID'}, 400
     
     try:
+        query = text("SELECT item_name, item_cost, promotion_type, item_photo_url FROM item WHERE item.item_id = :product_id")
         with db.engine.connect() as connection:
-            itemName = connection.execute(text("SELECT item_name FROM item WHERE item.item_id == product_id"))
-            itemPrice = connection.execute(text("SELECT item_cost FROM item WHERE item.item_id == product_id"))
-            itemPhoto = connection.execute(text("SELECT item_photo_url from item WHERE item.item_id == product_id"))
+            productInfo = connection.excute(query, {"product_id": product_id}).fetchone()
             #TODO what about sending the promotion type? you have not included this in the 'expected data'
             # are you wanting this to be calculated in the price or right at the end 
             #thus far i have just sent the item price as stored in the database
 
+        item_name = result.item_name
+        item_cost = result.item_cost
+        promotion_type = result.promotion_type
+        item_photo_url = result.item_photo_url
+
         return jsonify({
             "title": itemName,
             "price": itemPrice,
+            "itemDescription": f"{itemPromotion}% off" if itemPromotion else " ",
             "photoURL": itemPhoto,
         })
     except Exception as e:
@@ -163,14 +168,15 @@ def get_product_info():
 @app.route("/get_time_due")
 def get_time_due():
     # Get the order ID from the request
-    order_id = request.args.get('order_id')
-    if not order_id:
+    orderId = request.args.get('order_id')
+    if not orderId:
         return {'error': 'Please provide an order ID'}, 400
     
-    print(request.args)
-    
     try:
-        due_time = datetime.utcnow() + timedelta(minutes=30)  # Replace with actual logic
+        with db.engine.connect() as connection:
+            query = text("SELECT time_confirmed FROM shared_order WHERE shared_order.order_id = :orderId")
+            timeStamp = connection.execute(query, {"orderId": orderId}).fetchone()
+        due_time = timeStamp[0] + timedelta(hours=72)
         # Convert to ISO format string
         due_time_iso = due_time.isoformat() + 'Z'  # Adding 'Z' to indicate UTC time
         return jsonify({'success': True, 'time_due': due_time_iso}), 200
@@ -197,47 +203,66 @@ def search_result():
     if not search_query:
         return {'error': 'Please provide a search query'}, 400
     
-    print(request.args)
-    
-    items = [
-        {
-            "imgSource": "https://via.placeholder.com/150",
-            "itemName": "Item 1",
-            "itemDescription": "Description for Item 1. This is a great product.",
-            "price": 19.99,
-            "productId": 1
-        },
-        {
-            "imgSource": "https://via.placeholder.com/150",
-            "itemName": "Item 2",
-            "itemDescription": "Description for Item 2. Another fantastic item.",
-            "price": 29.99,
-            "productId": 2
-        },
-        {
-            "imgSource": "https://via.placeholder.com/150",
-            "itemName": "Item 3",
-            "itemDescription": "Description for Item 3. You won't regret buying this.",
-            "price": 49.99,
-            "productId": 3
-        },
-        {
-            "imgSource": "https://via.placeholder.com/150",
-            "itemName": "Item 4",
-            "itemDescription": "Description for Item 4. Best value for your money.",
-            "price": 9.99,
-            "productId": 4
-        },
-        {
-            "imgSource": "https://via.placeholder.com/150",
-            "itemName": "Item 5",
-            "itemDescription": "Description for Item 5. Top quality product.",
-            "price": 39.99,
-            "productId": 5
-        }
-    ]
+    try :
+        with db.engine.connect() as connection:
+            query = text("SELECT item_photo_url, item_name, promotion_type, item_cost, item_id FROM item WHERE SOUNDEX(item_name) = SOUNDEX(:search_query)")
+            searchResult = connection.execute(query, {"search_query": search_query}).fetchall()
+        
+        items = [
+                {
+                    "imgSource": row.item_photo_url,
+                    "itemName": row.item_name,
+                    "itemDescription": f"{row.promotion_type}% off" if row.promotion_type else " ",
+                    "price": row.item_cost
+                    "productID": row.item_id
+                }
+                for row in searchResult
+        ]
+        
+        return jsonify({"items": items})
 
-    return {'items': items}
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+    
+    
+    # items = [
+    #     {
+    #         "imgSource": "https://via.placeholder.com/150",
+    #         "itemName": "Item 1",
+    #         "itemDescription": "Description for Item 1. This is a great product.",
+    #         "price": 19.99,
+    #         "productId": 1
+    #     },
+    #     {
+    #         "imgSource": "https://via.placeholder.com/150",
+    #         "itemName": "Item 2",
+    #         "itemDescription": "Description for Item 2. Another fantastic item.",
+    #         "price": 29.99,
+    #         "productId": 2
+    #     },
+    #     {
+    #         "imgSource": "https://via.placeholder.com/150",
+    #         "itemName": "Item 3",
+    #         "itemDescription": "Description for Item 3. You won't regret buying this.",
+    #         "price": 49.99,
+    #         "productId": 3
+    #     },
+    #     {
+    #         "imgSource": "https://via.placeholder.com/150",
+    #         "itemName": "Item 4",
+    #         "itemDescription": "Description for Item 4. Best value for your money.",
+    #         "price": 9.99,
+    #         "productId": 4
+    #     },
+    #     {
+    #         "imgSource": "https://via.placeholder.com/150",
+    #         "itemName": "Item 5",
+    #         "itemDescription": "Description for Item 5. Top quality product.",
+    #         "price": 39.99,
+    #         "productId": 5
+    #     }
+    # ]
     
     # TODO - Implement the logic to search the items based on the query
     #result = db.engine.execute("SELECT * FROM your_table")
@@ -256,6 +281,14 @@ def search_result():
 ##     "order_id": 1,
 ##     "user_id": "example@student.bham.ac.uk"
 ## }
+
+
+
+    try :
+        with db.engine.connect() as connection:
+            query = text("SELECT item_photo_url, item_name, promotion_type, item_cost, item_id FROM item WHERE SOUNDEX(item_name) = SOUNDEX(:search_query)")
+            searchResult = connection.execute(query, {"search_query": search_query}).fetchall()
+
 @app.route("/confirm_order", methods=['POST'])
 def confirm_order():
     # Get the JSON body from the request
@@ -263,16 +296,18 @@ def confirm_order():
     if not data:
         return {'error': 'Please provide the required details'}, 400
     
-    print(data)
-    
     # DONT FORGET - take timestamp here and add this to databse too
-
     # Get the order ID and user ID from the JSON body
-    order_id = data.get('order_id')
-    user_id = data.get('user_id')
-    if not order_id or not user_id:
+    orderId = data.get('order_id')
+    userId = data.get('user_id')
+    if not orderId or not userId:
         return jsonify({'success': False, 'message': 'Order ID and User ID are required'}), 400
     
+    try:
+        with db.engine.connect() as connection:
+            query = text("SELECT user.primary_user FROM user INNER JOIN shared_order ON user.user_email = shared_order.host_email WHERE ")
+            hostUser = connection.exectute(query, {})
+
     return jsonify({'success': True, 'message': 'Order confirmed successfully'}), 200
     # if not successful
     return jsonify({'success': False, 'message': 'An error occurred while confirming the order.'}), 500
