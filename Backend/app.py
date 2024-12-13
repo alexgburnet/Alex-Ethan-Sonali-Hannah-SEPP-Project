@@ -274,21 +274,33 @@ def get_product_info():
     product_id = request.args.get('product_id')
     if not product_id:
         return {'error': 'Please provide a product ID'}, 400
-    
+
     try:
         with db.engine.connect() as connection:
-            itemName = connection.execute(text("SELECT item_name FROM item WHERE item.item_id == product_id"))
-            itemPrice = connection.execute(text("SELECT item_cost FROM item WHERE item.item_id == product_id"))
-            itemPhoto = connection.execute(text("SELECT item_photo_url from item WHERE item.item_id == product_id"))
-            #TODO what about sending the promotion type? you have not included this in the 'expected data'
-            # are you wanting this to be calculated in the price or right at the end 
-            #thus far i have just sent the item price as stored in the database
+            # Fetch product information
+            product_query = text("""
+                SELECT item_name, item_cost, item_photo_url, descriptions
+                FROM public.item
+                WHERE item_id = :product_id
+            """)
+            product_info = connection.execute(product_query, {"product_id": product_id}).fetchone()
+
+            if not product_info:
+                return {'error': 'Product not found'}, 404
+
+            # Extract product details
+            item_name = product_info.item_name
+            item_cost = float(product_info.item_cost)
+            item_photo_url = product_info.item_photo_url
+            description = product_info.descriptions
 
         return jsonify({
-            "title": itemName,
-            "price": itemPrice,
-            "photoURL": itemPhoto,
+            "title": item_name,
+            "price": round(item_cost, 2),
+            "photoURL": item_photo_url,
+            "description": description
         })
+
     except Exception as e:
         return {'error': str(e)}, 500
 
@@ -297,20 +309,40 @@ def get_product_info():
 ## - Order ID
 ## This endpoint will return the time left for the order to be confirmed by all 
 ## GET request to /get_time_left?order_id=1
+from datetime import datetime, timedelta
+from flask import request, jsonify
+
 @app.route("/get_time_due")
 def get_time_due():
     # Get the order ID from the request
     order_id = request.args.get('order_id')
     if not order_id:
-        return {'error': 'Please provide an order ID'}, 400
-    
-    print(request.args)
-    
+        return jsonify({'error': 'Please provide an order ID'}), 400
+
     try:
-        due_time = datetime.utcnow() + timedelta(minutes=30)  # Replace with actual logic
-        # Convert to ISO format string
-        due_time_iso = due_time.isoformat() + 'Z'  # Adding 'Z' to indicate UTC time
-        return jsonify({'success': True, 'time_due': due_time_iso}), 200
+        with db.engine.connect() as connection:
+            # Fetch the order's confirmation status and time confirmed
+            query = text("""
+                SELECT order_confirmed, time_confirmed
+                FROM public.shared_order
+                WHERE order_id = :order_id
+            """)
+            order_info = connection.execute(query, {"order_id": order_id}).fetchone()
+
+            if not order_info:
+                return jsonify({'error': 'Order not found'}), 404
+
+            order_confirmed = order_info.order_confirmed
+            time_confirmed = order_info.time_confirmed
+
+            if order_confirmed:
+                # Add 3 days to the time confirmed
+                time_due = time_confirmed + timedelta(days=3)
+                time_due_iso = time_due.isoformat() + 'Z'  # Add 'Z' to indicate UTC
+                return jsonify({'success': True, 'time_due': time_due_iso}), 200
+            else:
+                return jsonify({'success': False, 'message': 'Order is not confirmed yet.'}), 200
+
     except Exception as e:
         print(f"Error fetching time due: {e}")
         return jsonify({'success': False, 'message': 'An error occurred while fetching time due.'}), 500
