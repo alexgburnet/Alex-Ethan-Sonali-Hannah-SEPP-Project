@@ -102,6 +102,8 @@ function Homepage () {
             >
                 <h2>Welcome!</h2>
                 <p>Please enter your username to continue.</p>
+                <p>This can be anything, as this is handled by ssh</p>
+                <p>Remember, this will be stored in cookies!</p>
                 <form onSubmit={handleUsernameSubmit}>
                     <input
                         type="text"

@@ -55,8 +55,8 @@ function Cart() {
                 setError(response.data.message || "Failed to confirm the order.");
             }
         } catch (err) {
-            console.error("Error confirming order:", err);
-            setError("An error occurred while confirming the order.");
+            console.error("Error confirming order (try signing out and back in):", err);
+            setError("An error occurred while confirming the order. (try signing out and back in)");
         } finally {
             setConfirming(false);
         }
@@ -93,7 +93,7 @@ function Cart() {
             }
         } catch (err) {
             console.error("Error fetching cart data:", err);
-            setError("Failed to fetch cart data.");
+            setError("Failed to fetch cart data. (try signing out and back in)");
         } finally {
             setLoading(false);
         }

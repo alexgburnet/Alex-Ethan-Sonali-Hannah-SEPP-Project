@@ -45,7 +45,7 @@ function ProductPage() {
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching product data:', error);
-                setError('Error loading product information.');
+                setError('Error loading product information. (try signing out and back in)');
                 setLoading(false);
             }
         };
@@ -117,12 +117,12 @@ function ProductPage() {
                 window.alert("Item added to basket successfully!");
                 setError(null);
             } else {
-                window.alert(response.data.error || 'An unknown error occurred.');
-                setError(response.data.error || 'An unknown error occurred.');
+                window.alert(response.data.error || 'An unknown error occurred. (try signing out and back in)');
+                setError(response.data.error || 'An unknown error occurred. (try signing out and back in)');
             }
         } catch (error) {
             console.error('Error adding to basket:', error);
-            window.alert("An error occurred while adding to the basket.");
+            window.alert("An error occurred while adding to the basket. (try signing out and back in)");
             setError('An error occurred while adding to the basket.');
         }
     };
