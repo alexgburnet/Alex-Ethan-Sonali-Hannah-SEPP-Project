@@ -410,32 +410,65 @@ def search_result():
 ## }
 @app.route("/confirm_order", methods=['POST'])
 def confirm_order():
+    from datetime import datetime
+
     # Get the JSON body from the request
     data = request.get_json()
     if not data:
-        return {'error': 'Please provide the required details'}, 400
+        return jsonify({'error': 'Please provide the required details'}), 400
     
-    print(data)
-    
-    # DONT FORGET - take timestamp here and add this to databse too
-
     # Get the order ID and user ID from the JSON body
     order_id = data.get('order_id')
     user_id = data.get('user_id')
-    if not order_id or not user_id:
+    if (order_id is None or user_id is None) or (not order_id and order_id != 0):
         return jsonify({'success': False, 'message': 'Order ID and User ID are required'}), 400
-    
-    return jsonify({'success': True, 'message': 'Order confirmed successfully'}), 200
-    # if not successful
-    return jsonify({'success': False, 'message': 'An error occurred while confirming the order.'}), 500
-    # TODO - Implement the logic to confirm the order for the user
-    #result = db.engine.execute("SELECT * FROM your_table")
-    #rows = [dict(row) for row in result]
-    #return {'data': rows}
-    #set status to confirm
-    #check timestamp for order id
-        #if true copy the timestamp
-        #if false create one: get the current time
+
+    try:
+        with db.engine.connect() as connection:
+            # Begin a transaction
+            trans = connection.begin()
+            try:
+                # Verify the user is the host of the order
+                verify_host_query = text("""
+                    SELECT host_email
+                    FROM public.shared_order
+                    WHERE order_id = :order_id
+                """)
+                result = connection.execute(verify_host_query, {"order_id": order_id}).fetchone()
+
+                if not result:
+                    return jsonify({'success': False, 'message': 'Order not found'}), 404
+
+                host_email = result.host_email
+
+                if host_email != user_id:
+                    return jsonify({'success': False, 'message': 'Only the host can confirm the order'}), 403
+
+                # Confirm the order and set the timestamp
+                current_timestamp = datetime.utcnow()
+                update_query = text("""
+                    UPDATE public.shared_order
+                    SET order_confirmed = TRUE, time_confirmed = :current_timestamp
+                    WHERE order_id = :order_id
+                """)
+                connection.execute(update_query, {
+                    "order_id": order_id,
+                    "current_timestamp": current_timestamp
+                })
+
+                # Commit the transaction
+                trans.commit()
+                return jsonify({'success': True, 'message': 'Order confirmed successfully'}), 200
+
+            except Exception as e:
+                # Rollback the transaction on error
+                trans.rollback()
+                print(f"Error confirming order: {e}")
+                return jsonify({'success': False, 'message': 'An error occurred while confirming the order.'}), 500
+
+    except Exception as e:
+        print(f"Database connection error: {e}")
+        return jsonify({'success': False, 'message': 'An error occurred while confirming the order.'}), 500
 
 ## CHECK IF ORDER CONFIRMED ENDPOINT
 ## This endpoint will take in the following parameters:
