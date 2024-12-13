@@ -38,36 +38,56 @@ def hello_world():
 ## GET request to /get_final_cost?order_id=1
 @app.route("/get_final_cost")
 def get_final_cost():
-    # Get the order ID from the request
+    # Get the order ID and user email from the request
     order_id = request.args.get('order_id')
-    if not order_id:
-        return {'error': 'Please provide an order ID'}, 400
+    user_id = request.args.get('user_id')
     
+    if not order_id or not user_id:
+        return {'error': 'Please provide both order_id and user_email'}, 400
+
     try:
         with db.engine.connect() as connection:
-            itemName = connection.execute(text("SELECT item_name FROM item WHERE item.item_id == product_id"))
-            itemPrice = connection.execute(text("SELECT item_cost FROM item WHERE item.item_id == product_id"))
-            itemPhoto = connection.execute(text("SELECT item_photo_url from item WHERE item.item_id == product_id"))
-        #fetch all prices
-        #apply any promotions
-        #add total
-        #fetch the number of unique users for each order
-        #add set fee split
+            # Fetch all items for the given order and user
+            query = text("""
+                SELECT i.item_name, i.item_cost, o.item_quantity
+                FROM orders o
+                JOIN item i ON o.item_id = i.item_id
+                WHERE o.order_id = :order_id AND o.user_email = :user_email
+            """)
+            result = connection.execute(query, {"order_id": order_id, "user_email": user_id}).fetchall()
 
+            # Calculate the user's subtotal
+            user_subtotal = sum(float(row.item_cost) * row.item_quantity for row in result)
+            
+            # Fetch the number of unique users in the order
+            user_count_query = text("""
+                SELECT COUNT(DISTINCT user_email)
+                FROM orders
+                WHERE order_id = :order_id
+            """)
+            user_count = connection.execute(user_count_query, {"order_id": order_id}).scalar()
+            
+            # Calculate the delivery fee split
+            delivery_fee_split = float(6) / user_count if user_count > 0 else 0
+            
+            # Calculate the final cost
+            final_cost = user_subtotal + delivery_fee_split
+            
+            # Optional: Fetch additional data for response (e.g., item details)
+            items = [
+                {"item_name": row.item_name, "item_cost": row.item_cost, "item_quantity": row.item_quantity}
+                for row in result
+            ]
+
+        # Return the response
         return jsonify({
-            "final_cost": finalCost
+            "final_cost": round(final_cost, 2),
+            "user_subtotal": round(user_subtotal, 2),
+            "delivery_fee_split": round(delivery_fee_split, 2),
+            "items": items
         })
     except Exception as e:
         return {'error': str(e)}, 500
-
-
-    
-    # TODO - Implement the logic to calculate the final cost of the order
-    #result = db.engine.execute("SELECT * FROM your_table")
-    #rows = [dict(row) for row in result]
-    #return {'data': rows}
-    #recieve order_id and user_id and return a float
-    #just do percent-off promotions
 
 ## ADD TO BASKET ENDPOINT
 ## This endpoint will take in the following parameters:
@@ -85,6 +105,8 @@ def get_final_cost():
 ## }
 @app.route("/add_to_basket", methods=['POST'])
 def add_to_basket():
+    from sqlalchemy import text
+
     # Get the JSON body from the request
     data = request.get_json()
     if not data:
@@ -95,36 +117,151 @@ def add_to_basket():
     quantity = data.get('quantity')
     user_id = data.get('user_id')
 
-    print(data)
-
     # Check if any required field is missing
-    if not order_id or not product_id or not quantity or not user_id:
-        return jsonify({'error': 'Please provide the required details'}), 400
+    if order_id is None or product_id is None or quantity is None or user_id is None:
+        return jsonify({'error': 'Please provide all required details'}), 400
 
-    # Check if the order_id is -1
-    if order_id == '-1':
-        # Generate a new order_id since -1 was received
-        new_order_id = 5  # Generate a new unique order ID
-        # Return JSON with the new order_id - MAKE THIS PERSON HOST
-        return jsonify({
-            'success': True,
-            'message': 'Order ID not found. New order ID generated.',
-            'new_order_id': new_order_id,
-        }), 200
+    try:
+        with db.engine.connect() as connection:
+            # Begin a transaction
+            trans = connection.begin()
+            try:
+                # Ensure the user exists in the user table
+                check_user_query = text("""
+                    SELECT COUNT(*)
+                    FROM public.user
+                    WHERE user_email = :user_id
+                """)
+                user_exists = connection.execute(check_user_query, {"user_id": user_id}).scalar()
 
-    # If order_id is not -1, use the provided order_id and return a different response
-    return jsonify({
-        'success': True,
-        'message': 'Order ID received and processed.'
-    }), 200
-    
-    # TODO - Implement the logic to add the product to the basket
-    #result = db.engine.execute("SELECT * FROM your_table")
-    #rows = [dict(row) for row in result]
-    #return {'data': rows}
-    #check database is not empty - if it is, call a subprogram to create an order
-    #needs to check that verification is set to false
-    #add information to orders table
+                if not user_exists:
+                    # Insert the user if they don't exist
+                    insert_user_query = text("""
+                        INSERT INTO public.user (user_email, user_firstname, user_lastname, primary_user, order_confirmed)
+                        VALUES (:user_id, 'Unknown', 'Unknown', TRUE, FALSE)
+                    """)
+                    connection.execute(insert_user_query, {"user_id": user_id})
+
+                # Handle the case where order_id is -1
+                if order_id == -1:
+                    # Generate a new unique order_id
+                    new_order_id_query = text("""
+                        SELECT COALESCE(MAX(order_id), 0) + 1 AS new_order_id
+                        FROM public.shared_order
+                    """)
+                    new_order_id = connection.execute(new_order_id_query).scalar()
+
+                    # Insert into shared_order with the user as the host
+                    insert_shared_order_query = text("""
+                        INSERT INTO public.shared_order (order_id, host_email, order_confirmed)
+                        VALUES (:new_order_id, :user_id, FALSE)
+                    """)
+                    connection.execute(insert_shared_order_query, {"new_order_id": new_order_id, "user_id": user_id})
+
+                    # Add the product to the orders table
+                    insert_order_query = text("""
+                        INSERT INTO public.orders (order_id, user_email, item_id, item_quantity)
+                        VALUES (:new_order_id, :user_id, :product_id, :quantity)
+                    """)
+                    connection.execute(insert_order_query, {
+                        "new_order_id": new_order_id,
+                        "user_id": user_id,
+                        "product_id": product_id,
+                        "quantity": quantity
+                    })
+
+                    # Commit the transaction
+                    trans.commit()
+                    return jsonify({
+                        'success': True,
+                        'message': 'New order created and item added.',
+                        'new_order_id': new_order_id
+                    }), 200
+
+                # Handle the case where a valid order_id is provided
+                else:
+                    # Check if the order exists
+                    order_info_query = text("""
+                        SELECT host_email
+                        FROM public.shared_order
+                        WHERE order_id = :order_id
+                    """)
+                    order_info = connection.execute(order_info_query, {"order_id": order_id}).fetchone()
+
+                    if not order_info:
+                        return jsonify({'error': 'Order ID not found'}), 404
+
+                    host_email = order_info.host_email
+
+                    # If the user is not part of the order, add them
+                    if not host_email:
+                        # If no host exists, make the user the host
+                        update_shared_order_query = text("""
+                            UPDATE public.shared_order
+                            SET host_email = :user_id
+                            WHERE order_id = :order_id
+                        """)
+                        connection.execute(update_shared_order_query, {"user_id": user_id, "order_id": order_id})
+                    else:
+                        # Add the user as a participant
+                        print(f"User {user_id} added to order_id {order_id}")
+
+                    # Add or update the item in the orders table
+                    check_existing_item_query = text("""
+                        SELECT item_quantity
+                        FROM public.orders
+                        WHERE order_id = :order_id AND user_email = :user_id AND item_id = :product_id
+                    """)
+                    existing_item = connection.execute(check_existing_item_query, {
+                        "order_id": order_id,
+                        "user_id": user_id,
+                        "product_id": product_id
+                    }).fetchone()
+
+                    if existing_item:
+                        # Update the item quantity
+                        update_item_query = text("""
+                            UPDATE public.orders
+                            SET item_quantity = item_quantity + :quantity
+                            WHERE order_id = :order_id AND user_email = :user_id AND item_id = :product_id
+                        """)
+                        connection.execute(update_item_query, {
+                            "quantity": quantity,
+                            "order_id": order_id,
+                            "user_id": user_id,
+                            "product_id": product_id
+                        })
+                        message = "Item quantity updated."
+                    else:
+                        # Insert the item
+                        insert_item_query = text("""
+                            INSERT INTO public.orders (order_id, user_email, item_id, item_quantity)
+                            VALUES (:order_id, :user_id, :product_id, :quantity)
+                        """)
+                        connection.execute(insert_item_query, {
+                            "order_id": order_id,
+                            "user_id": user_id,
+                            "product_id": product_id,
+                            "quantity": quantity
+                        })
+                        message = "Item added to basket."
+
+                    # Commit the transaction
+                    trans.commit()
+                    return jsonify({
+                        'success': True,
+                        'message': message,
+                        'order_id': order_id
+                    }), 200
+
+            except Exception as e:
+                # Rollback the transaction on error
+                trans.rollback()
+                print(f"Transaction rolled back due to: {e}")
+                raise e
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 ## GET PRODUCT INFO ENDPOINT
 ## This endpoint will take in the following parameters:
