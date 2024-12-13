@@ -9,27 +9,29 @@
     margin: 20px;
 }
 
-.product-container {
-    display: flex;
-    flex: 3;
-    flex-direction: row;
-}
-
 .image-container {
     display: flex;
     flex: 1;
     align-items: center;
     justify-content: center;
     text-align: center;
-    max-height: 500px; /* Limit the container's height */
+    height: 100%; /* Match the height of .product-container */
     overflow: hidden; /* Prevent overflowing content */
 }
 
 .image-container img {
-    max-width: 100%; /* Limit image width to container's width */
-    max-height: 100%; /* Limit image height to container's height */
-    object-fit: contain; /* Ensure the image scales while maintaining aspect ratio */
+    max-width: 100%; /* Limit image width to the container's width */
+    max-height: 100%; /* Limit image height to the container's height */
+    object-fit: contain; /* Scale the image while maintaining aspect ratio */
     border-radius: 10px; /* Optional: Add rounded corners to the image */
+}
+
+.product-container {
+    display: flex;
+    flex: 3;
+    flex-direction: row;
+    max-height: 100%; /* Ensure the container's height remains fixed */
+    overflow: hidden; /* Prevent content from exceeding the container */
 }
 
 
