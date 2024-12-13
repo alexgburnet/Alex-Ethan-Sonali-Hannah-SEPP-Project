@@ -21,7 +21,17 @@
     align-items: center;
     justify-content: center;
     text-align: center;
+    max-height: 500px; /* Limit the container's height */
+    overflow: hidden; /* Prevent overflowing content */
 }
+
+.image-container img {
+    max-width: 100%; /* Limit image width to container's width */
+    max-height: 100%; /* Limit image height to container's height */
+    object-fit: contain; /* Ensure the image scales while maintaining aspect ratio */
+    border-radius: 10px; /* Optional: Add rounded corners to the image */
+}
+
 
 
 .product-info-container hr {
