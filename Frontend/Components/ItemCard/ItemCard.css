@@ -4,14 +4,30 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
     overflow: hidden; 
     transition: transform 0.2s; 
+    width: 200px; /* Fixed width for the card */
+    height: 300px; /* Fixed height for the card */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensure content is spaced evenly */
 }
 
 .ItemCard:hover {
     transform: scale(1.05); 
 }
+
+.ItemCardImage {
+    flex: 1; /* Ensure the image container takes up available space */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60%; /* Image container height (60% of the card) */
+}
+
 .ItemCardImage img {
-    width: 100%;
-    height: auto;
+    max-width: 100%; /* Ensure image doesn't overflow container width */
+    max-height: 100%; /* Ensure image doesn't overflow container height */
+    object-fit: contain; /* Scale image while maintaining aspect ratio */
     border-top-left-radius: 10px; 
     border-top-right-radius: 10px; 
 }
@@ -19,6 +35,24 @@
 .ItemCardDetails {
     padding: 15px;
     text-align: left;
+    flex-shrink: 0; /* Prevent the text from being squished */
+    height: 40%; /* Details container height (40% of the card) */
+    overflow: hidden; /* Prevent overflowing text */
+}
+
+.ItemCardDetails h3 {
+    font-size: 1rem;
+    margin: 0;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Truncate long text with ellipsis */
+}
+
+.ItemCardDetails p {
+    font-size: 0.9rem;
+    margin: 0;
+    color: #555;
 }
 
 .ItemCardLink {
