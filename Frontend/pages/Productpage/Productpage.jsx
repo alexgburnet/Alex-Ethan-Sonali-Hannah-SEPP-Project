@@ -160,7 +160,7 @@ function ProductPage() {
 
                 <div className='product-info-container'>
                     <h1>{productData.itemName}</h1>
-                    <p>${productData.price.toFixed(2)}</p>
+                    <p>£{productData.price.toFixed(2)}</p>
 
                     <hr />
 
