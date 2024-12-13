@@ -29,7 +29,7 @@ function UserSubtotalCard(props) {
         <div className="subtotal-card">
             {/* User Information */}
             <div className="user-info">
-                <img src={userPFP} alt="User Profile" className="profile-pic" />
+                <img src={"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"} alt="User Profile" className="profile-pic" />
                 <p className="user-name">{userName}</p>
             </div>
 
@@ -55,7 +55,7 @@ function UserSubtotalCard(props) {
 }
 
 UserSubtotalCard.defaultProps = {
-    userPFP: "https://via.placeholder.com/150",
+    userPFP: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
     userName: "John Doe",
     purchases: [
         { item: 'Item 1', price: 10.00, quantity: 2 },
