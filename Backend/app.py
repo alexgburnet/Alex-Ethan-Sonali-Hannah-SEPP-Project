@@ -59,20 +59,6 @@ def get_final_cost():
             # Calculate the user's subtotal
             user_subtotal = sum(float(row.item_cost) * row.item_quantity for row in result)
             
-            # Fetch the number of unique users in the order
-            user_count_query = text("""
-                SELECT COUNT(DISTINCT user_email)
-                FROM orders
-                WHERE order_id = :order_id
-            """)
-            user_count = connection.execute(user_count_query, {"order_id": order_id}).scalar()
-            
-            # Calculate the delivery fee split
-            delivery_fee_split = float(6) / user_count if user_count > 0 else 0
-            
-            # Calculate the final cost
-            final_cost = user_subtotal + delivery_fee_split
-            
             # Optional: Fetch additional data for response (e.g., item details)
             items = [
                 {"item_name": row.item_name, "item_cost": row.item_cost, "item_quantity": row.item_quantity}
@@ -81,9 +67,7 @@ def get_final_cost():
 
         # Return the response
         return jsonify({
-            "final_cost": round(final_cost, 2),
             "user_subtotal": round(user_subtotal, 2),
-            "delivery_fee_split": round(delivery_fee_split, 2),
             "items": items
         })
     except Exception as e:
@@ -611,14 +595,36 @@ def get_delivery_cost():
     order_id = request.args.get('order_id')
     if not order_id:
         return {'error': 'Please provide an order ID'}, 400
-    
-    print(request.args)
 
-    return jsonify({
-        "total": 5.99,
-        "individual": 1.99,
-        "people": 3 # Number of people in the order
-    })
+    try:
+        with db.engine.connect() as connection:
+            # Query to count the number of distinct participants in the order
+            user_count_query = text("""
+                SELECT COUNT(DISTINCT user_email) AS user_count
+                FROM orders
+                WHERE order_id = :order_id
+            """)
+            user_count_result = connection.execute(user_count_query, {"order_id": order_id}).fetchone()
+
+            if not user_count_result or user_count_result.user_count == 0:
+                return jsonify({'error': 'No users found for the specified order ID'}), 404
+
+            user_count = user_count_result.user_count
+
+            # Calculate delivery cost
+            total_delivery_cost = 6.00  # Standard delivery fee
+            individual_delivery_cost = total_delivery_cost / user_count if user_count > 0 else 0
+
+        # Return the calculated delivery costs
+        return jsonify({
+            "total": round(total_delivery_cost, 2),
+            "individual": round(individual_delivery_cost, 2),
+            "people": user_count
+        }), 200
+
+    except Exception as e:
+        print(f"Error calculating delivery cost: {e}")
+        return jsonify({'error': 'An error occurred while calculating the delivery cost'}), 500
 
 
 
