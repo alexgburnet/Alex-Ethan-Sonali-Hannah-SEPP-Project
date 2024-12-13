@@ -12,37 +12,40 @@ function ItemContainer({ searchQuery }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (searchQuery) {
-      setLoading(true);
-      setError(null);
-      const fetchItems = async () => {
-        try {
-          const response = await axios.get(`${API_URL}/search_result?search_query=${searchQuery}`);
-          // Handle response based on your API's data structure
-          if (response.data.error) {
-            setError(response.data.error); // API error handling
-            setItems([]);
-          } else {
-            setItems(response.data.items || []); // Populate items, if available
-          }
-        } catch (error) {
-          setError(error.response ? error.response.data.message : error.message);
-          setItems([]);
-        } finally {
-          setLoading(false);
-        }
-      };
+    setLoading(true);
+    setError(null);
 
-      fetchItems();
-    } else {
-      setItems([]); // Clear items when search query is empty
-    }
+    const fetchItems = async () => {
+      try {
+        // Determine the API URL based on whether there is a search query
+        const url = searchQuery
+          ? `${API_URL}/search_result?search_query=${searchQuery}`
+          : `${API_URL}/search_result`;
+
+        const response = await axios.get(url);
+
+        // Handle response based on your API's data structure
+        if (response.data.error) {
+          setError(response.data.error); // API error handling
+          setItems([]);
+        } else {
+          setItems(response.data.items || []); // Populate items, if available
+        }
+      } catch (error) {
+        setError(error.response ? error.response.data.message : error.message);
+        setItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItems();
   }, [searchQuery]);
 
   return (
     <div className="item-container">
       <div className="search-result">
-        <p>{searchQuery ? `Results for: ${searchQuery}` : "Type something and search to display search query"}</p>
+        <p>{searchQuery ? `Results for: ${searchQuery}` : "Here are some random items you might like!"}</p>
       </div>
       {loading && <p>Loading...</p>}
       {error && <p className="error">{error}</p>}
