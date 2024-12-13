@@ -361,59 +361,42 @@ def get_time_due():
 ## GET request to /search_result?search_query=apple
 @app.route("/search_result")
 def search_result():
+    from sqlalchemy import text
+
     # Get the search query from the request
     search_query = request.args.get('search_query')
     if not search_query:
         return {'error': 'Please provide a search query'}, 400
-    
-    print(request.args)
-    
-    items = [
-        {
-            "imgSource": "https://via.placeholder.com/150",
-            "itemName": "Item 1",
-            "itemDescription": "Description for Item 1. This is a great product.",
-            "price": 19.99,
-            "productId": 1
-        },
-        {
-            "imgSource": "https://via.placeholder.com/150",
-            "itemName": "Item 2",
-            "itemDescription": "Description for Item 2. Another fantastic item.",
-            "price": 29.99,
-            "productId": 2
-        },
-        {
-            "imgSource": "https://via.placeholder.com/150",
-            "itemName": "Item 3",
-            "itemDescription": "Description for Item 3. You won't regret buying this.",
-            "price": 49.99,
-            "productId": 3
-        },
-        {
-            "imgSource": "https://via.placeholder.com/150",
-            "itemName": "Item 4",
-            "itemDescription": "Description for Item 4. Best value for your money.",
-            "price": 9.99,
-            "productId": 4
-        },
-        {
-            "imgSource": "https://via.placeholder.com/150",
-            "itemName": "Item 5",
-            "itemDescription": "Description for Item 5. Top quality product.",
-            "price": 39.99,
-            "productId": 5
-        }
-    ]
 
-    return {'items': items}
-    
-    # TODO - Implement the logic to search the items based on the query
-    #result = db.engine.execute("SELECT * FROM your_table")
-    #rows = [dict(row) for row in result]
-    #return {'data': rows}
-    #use soundex to search
-    #return all from item table 
+    try:
+        with db.engine.connect() as connection:
+            # Perform fuzzy search using ILIKE
+            search_query = f"%{search_query}%"
+            search_query_sql = text("""
+                SELECT item_id, item_name, descriptions, item_cost, item_photo_url
+                FROM public.item
+                WHERE item_name ILIKE :search_query
+            """)
+            result = connection.execute(search_query_sql, {"search_query": search_query}).fetchall()
+
+            # Format the results into a list of dictionaries
+            items = [
+                {
+                    "imgSource": row.item_photo_url,
+                    "itemName": row.item_name,
+                    "itemDescription": row.descriptions,
+                    "price": float(row.item_cost),
+                    "productId": row.item_id
+                }
+                for row in result
+            ]
+
+        # Return the search results
+        return jsonify({"items": items}), 200
+
+    except Exception as e:
+        print(f"Error in search_result: {e}")
+        return jsonify({'error': 'An error occurred while performing the search.'}), 500
 
 ## CONFIRM ORDER ENDPOINT
 ## This endpoint will take in the following parameters:
