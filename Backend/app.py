@@ -480,18 +480,31 @@ def check_if_order_confirmed():
     # Get the order ID from the request
     order_id = request.args.get('order_id')
     if not order_id:
-        return {'error': 'Please provide an order ID'}, 400
-    
-    print(request.args)
-    
-    return jsonify({
-        "confirmed": False
-    }), 200
-    # TODO - Implement the logic to check if the order is confirmed
-    #result = db.engine.execute("SELECT * FROM your_table")
-    #rows = [dict(row) for row in result]
-    #return {'data': rows}
-    #check order id is true for everything return true or false ('data' : true) etc.
+        return jsonify({'error': 'Please provide an order ID'}), 400
+
+    try:
+        with db.engine.connect() as connection:
+            # Query to check if the order is confirmed
+            query = text("""
+                SELECT order_confirmed
+                FROM public.shared_order
+                WHERE order_id = :order_id
+            """)
+            result = connection.execute(query, {"order_id": order_id}).fetchone()
+
+            if not result:
+                return jsonify({'error': 'Order not found'}), 404
+
+            # Extract confirmation status
+            order_confirmed = result.order_confirmed
+
+        return jsonify({
+            "confirmed": order_confirmed
+        }), 200
+
+    except Exception as e:
+        print(f"Error checking order confirmation: {e}")
+        return jsonify({'error': 'An error occurred while checking order confirmation'}), 500
 
 ## USER IS ORDER HOST ENDPOINT
 ## This endpoint will take in the following parameters:
