@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import ImageGallery from 'react-image-gallery';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -9,12 +8,11 @@ import CustomButton from '../../Components/CustomButton/CustomButton';
 import SimilarProductCard from '../../Components/SimilarProductCard/SimilarProductCard';
 
 import './Productpage.css';
-import 'react-image-gallery/styles/css/image-gallery.css';
 
 function ProductPage() {
     const { productId } = useParams(); // Get productId from URL parameters
     const navigate = useNavigate(); // For navigation to similar products
-    
+
     // State for product data
     const [productData, setProductData] = useState({
         imgSource: "https://via.placeholder.com/150",
@@ -22,7 +20,7 @@ function ProductPage() {
         itemDescription: "Loading...",
         price: "0.00"
     });
-    
+
     const [quantity, setQuantity] = useState(1);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
@@ -64,13 +62,13 @@ function ProductPage() {
         if (productData.itemName && productData.itemName !== "Loading...") {
             setSimilarLoading(true);
             setSimilarError(null);
-    
+
             const fetchSimilarItems = async () => {
                 try {
                     const response = await axios.get(`${API_URL}/search_result`, {
                         params: { search_query: productData.itemName }
                     });
-    
+
                     if (response.data.error) {
                         setSimilarError(response.data.error);
                         setSimilarItems([]);
@@ -85,7 +83,7 @@ function ProductPage() {
                     setSimilarLoading(false);
                 }
             };
-    
+
             fetchSimilarItems();
         }
     }, [productData.itemName]);
@@ -133,12 +131,6 @@ function ProductPage() {
         navigate(`/product/${id}`); // Navigate to the clicked similar product
     };
 
-    const images = [
-        {
-            original: productData.imgSource,
-        },
-    ];
-
     if (loading) {
         return <div className="product-page">Loading...</div>;
     }
@@ -151,10 +143,10 @@ function ProductPage() {
         <div className="product-page">
             <div className='product-container'>
                 <div className='image-container'>
-                    <ImageGallery
-                        items={images}
-                        showPlayButton={false}
-                        showFullscreenButton={false}
+                    <img
+                        src={productData.imgSource}
+                        alt={productData.itemName}
+                        className="product-image"
                     />
                 </div>
 
