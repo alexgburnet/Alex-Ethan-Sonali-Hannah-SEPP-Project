@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import ImageGallery from 'react-image-gallery';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -13,6 +13,7 @@ import 'react-image-gallery/styles/css/image-gallery.css';
 
 function ProductPage() {
     const { productId } = useParams(); // Get productId from URL parameters
+    const navigate = useNavigate(); // For navigation to similar products
     
     // State for product data
     const [productData, setProductData] = useState({
@@ -32,13 +33,13 @@ function ProductPage() {
     const [similarLoading, setSimilarLoading] = useState(false);
     const [similarError, setSimilarError] = useState(null);
 
-    // Fetch product data when component mounts
+    // Fetch product data when component mounts or productId changes
     useEffect(() => {
         const fetchProductData = async () => {
             try {
                 const response = await axios.get(`${API_URL}/get_product_info?product_id=${productId}`);
                 setProductData({
-                    imgSource: response.data.imgSource,
+                    imgSource: response.data.photoURL, // Updated to match the API response
                     itemName: response.data.title,
                     itemDescription: response.data.description,
                     price: response.data.price
@@ -52,6 +53,10 @@ function ProductPage() {
         };
 
         fetchProductData();
+        // Reset quantity and messages when productId changes
+        setQuantity(1);
+        setError(null);
+        setSuccess(false);
     }, [productId]);
 
     // Fetch similar items when product name is available
@@ -86,17 +91,17 @@ function ProductPage() {
     }, [productData.itemName]);
 
     const handleQuantityChange = (event) => {
-        setQuantity(Number(event.target.value));
+        setQuantity(Math.max(1, Number(event.target.value))); // Ensure quantity is at least 1
     };
 
     const handleAddToBasket = async () => {
         try {
-            let orderId = Cookies.get('order_id') || '-1';
+            const orderId = Cookies.get('order_id') || '-1';
             const userId = Cookies.get('user_id') || 'default';
 
             const data = {
-                order_id: orderId,
-                product_id: productId,
+                order_id: parseInt(orderId), // Ensure order_id is sent as a number
+                product_id: parseInt(productId), // Ensure product_id is sent as a number
                 quantity: quantity,
                 user_id: userId,
             };
@@ -111,14 +116,21 @@ function ProductPage() {
                 if (response.data.new_order_id && response.data.new_order_id !== orderId) {
                     Cookies.set('order_id', response.data.new_order_id, { expires: 7 });
                 }
-                setSuccess(true);
+                window.alert("Item added to basket successfully!");
+                setError(null);
             } else {
-                setError(response.data.error);
+                window.alert(response.data.error || 'An unknown error occurred.');
+                setError(response.data.error || 'An unknown error occurred.');
             }
         } catch (error) {
             console.error('Error adding to basket:', error);
+            window.alert("An error occurred while adding to the basket.");
             setError('An error occurred while adding to the basket.');
         }
+    };
+
+    const handleSimilarProductClick = (id) => {
+        navigate(`/product/${id}`); // Navigate to the clicked similar product
     };
 
     const images = [
@@ -148,7 +160,7 @@ function ProductPage() {
 
                 <div className='product-info-container'>
                     <h1>{productData.itemName}</h1>
-                    <p>${productData.price}</p>
+                    <p>${productData.price.toFixed(2)}</p>
 
                     <hr />
 
@@ -157,7 +169,6 @@ function ProductPage() {
                         <input
                             type='number'
                             min='1'
-                            max='10'
                             value={quantity}
                             onChange={handleQuantityChange}
                         />
@@ -169,9 +180,6 @@ function ProductPage() {
                         text='Add to cart'
                         onClick={handleAddToBasket}
                     />
-
-                    {error && <p className="error">{error}</p>}
-                    {success && <p>Item added to basket successfully!</p>}
 
                     <p>{productData.itemDescription}</p>
                 </div>
@@ -196,6 +204,7 @@ function ProductPage() {
                                 itemDescription={item.itemDescription || "Item Description"}
                                 price={item.price ? item.price.toFixed(2) : "0.00"}
                                 productId={item.productId}
+                                onClick={() => handleSimilarProductClick(item.productId)}
                             />
                         ))
                     )}
