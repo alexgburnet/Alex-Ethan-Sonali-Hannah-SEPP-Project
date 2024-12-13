@@ -517,7 +517,7 @@ def user_is_host():
     # Get the order ID and user ID from the request
     order_id = request.args.get('order_id')
     user_id = request.args.get('user_id')
-    if not order_id or not user_id:
+    if (order_id is None or user_id is None) or (not order_id and order_id != 0):
         return jsonify({'error': 'Please provide the required details'}), 400
 
     try:
@@ -551,54 +551,59 @@ def user_is_host():
 ## GET request to /get_user_basket
 @app.route("/get_user_basket")
 def get_user_basket():
-    # Get the user ID and order ID from the request
+    # Get the order ID and user ID from the request
     user_id = request.args.get('user_id')
     order_id = request.args.get('order_id')
-    if not user_id or not order_id:
-        return {'error': 'Please provide the required details'}, 400
-    
+    if (order_id is None or user_id is None) or (not order_id and order_id != 0):
+        return jsonify({'error': 'Please provide the required details'}), 400
 
-    print(request.args)
+    try:
+        with db.engine.connect() as connection:
+            # Query to get all purchases in the order grouped by user
+            basket_query = text("""
+                SELECT
+                    u.user_email AS username,
+                    u.user_email AS userpfp,  -- Placeholder for user profile picture
+                    i.item_name AS item,
+                    i.item_cost AS price,
+                    o.item_quantity AS quantity
+                FROM public.orders o
+                JOIN public.item i ON o.item_id = i.item_id
+                JOIN public.user u ON o.user_email = u.user_email
+                WHERE o.order_id = :order_id
+                ORDER BY u.user_email, i.item_name
+            """)
+            results = connection.execute(basket_query, {"order_id": order_id}).fetchall()
 
-    userCarts = [
-        {
-            "userName": "Your Name",  # Current user's name
-            "userPFP": "https://via.placeholder.com/150",
-            "purchases": [
-                { "item": "Wireless Mouse", "price": 25.99, "quantity": 2 },
-                { "item": "Keyboard", "price": 45.50, "quantity": 1 },
-                { "item": "USB-C Cable", "price": 10.00, "quantity": 3 },
-            ]
-        },
-        {
-            "userName": "Alice Johnson",
-            "userPFP": "https://via.placeholder.com/150",
-            "purchases": [
-                { "item": "Monitor", "price": 150.00, "quantity": 1 },
-                { "item": "HDMI Cable", "price": 12.99, "quantity": 2 },
-            ]
-        },
-        {
-            "userName": "Bob Smith",
-            "userPFP": "https://via.placeholder.com/150",
-            "purchases": [
-                { "item": "Laptop Stand", "price": 30.00, "quantity": 1 },
-                { "item": "Webcam", "price": 60.00, "quantity": 1 },
-                { "item": "Desk Lamp", "price": 20.00, "quantity": 2 },
-            ]
-        },
-        # Add more user carts as needed
-    ]
-    
-    # In a real application, filter or retrieve userCarts based on user_id and order_id
-    return jsonify({"userCarts": userCarts}), 200
-    
-    # TODO - Implement the logic to retrieve the basket of the user
-    # result = db.engine.execute("SELECT * FROM your_table")
-    # rows = [dict(row) for row in result]
-    # return {'data': rows}
-    #return orders table as relevant and join it to item table
-    #item name, quantity, price, promotion type, url, id
+            if not results:
+                return jsonify({"userCarts": []}), 200
+
+            # Organize results into user carts
+            user_carts = {}
+            for row in results:
+                if row.username not in user_carts:
+                    user_carts[row.username] = {
+                        "userName": row.username,
+                        "userPFP": row.userpfp,  # Placeholder for a profile picture
+                        "purchases": []
+                    }
+                user_carts[row.username]["purchases"].append({
+                    "item": row.item,
+                    "price": float(row.price),
+                    "quantity": row.quantity
+                })
+
+            # Convert to a list of user carts
+            user_carts_list = list(user_carts.values())
+
+            # Sort the carts to ensure the current user's cart is first
+            user_carts_list.sort(key=lambda cart: cart["userName"] != user_id)
+
+        return jsonify({"userCarts": user_carts_list}), 200
+
+    except Exception as e:
+        print(f"Error fetching user baskets: {e}")
+        return jsonify({'error': f'Error: {str(e)}'}), 500
 
 @app.route("/get_delivery_cost", methods=['GET'])
 def get_delivery_cost():
@@ -614,11 +619,6 @@ def get_delivery_cost():
         "individual": 1.99,
         "people": 3 # Number of people in the order
     })
-    # TODO - Implement the logic to calculate the delivery cost of the order
-    #result = db.engine.execute("SELECT * FROM your_table")
-    #rows = [dict(row) for row in result]
-    #return {'data': rows}
-    #return delivery cost
 
 
 
