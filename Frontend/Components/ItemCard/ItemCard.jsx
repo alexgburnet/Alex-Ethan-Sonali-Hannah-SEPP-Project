@@ -9,7 +9,7 @@ function ItemCard(props) {
         <Link to={`/product/${props.productId}`} className="ItemCardLink">
             <div className="ItemCard">
                 <div className="ItemCardImage">
-                    <img src={props.imgSource} alt="Item" />
+                    <img src={props.imgSource || "https://via.placeholder.com/150"} alt="Item" />
                 </div>
                 <div className="ItemCardDetails">
                     <h3>{props.itemName}</h3>
