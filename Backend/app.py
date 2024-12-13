@@ -349,19 +349,27 @@ def search_result():
 
     # Get the search query from the request
     search_query = request.args.get('search_query')
-    if not search_query:
-        return {'error': 'Please provide a search query'}, 400
 
     try:
         with db.engine.connect() as connection:
-            # Perform fuzzy search using ILIKE
-            search_query = f"%{search_query}%"
-            search_query_sql = text("""
-                SELECT item_id, item_name, descriptions, item_cost, item_photo_url
-                FROM public.item
-                WHERE item_name ILIKE :search_query
-            """)
-            result = connection.execute(search_query_sql, {"search_query": search_query}).fetchall()
+            if search_query:
+                # Perform fuzzy search using ILIKE
+                search_query = f"%{search_query}%"
+                search_query_sql = text("""
+                    SELECT item_id, item_name, descriptions, item_cost, item_photo_url
+                    FROM public.item
+                    WHERE item_name ILIKE :search_query
+                """)
+                result = connection.execute(search_query_sql, {"search_query": search_query}).fetchall()
+            else:
+                # Fetch 20 random items if no search query is provided
+                random_items_sql = text("""
+                    SELECT item_id, item_name, descriptions, item_cost, item_photo_url
+                    FROM public.item
+                    ORDER BY RANDOM()
+                    LIMIT 20
+                """)
+                result = connection.execute(random_items_sql).fetchall()
 
             # Format the results into a list of dictionaries
             items = [
