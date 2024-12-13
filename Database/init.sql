@@ -81,3 +81,18 @@ ALTER TABLE ONLY public.orders
 
 ALTER TABLE ONLY public.shared_order
     ADD CONSTRAINT shared_order_host_email_fkey FOREIGN KEY (host_email) REFERENCES public.user(user_email);
+
+
+-- Add a descriptions column to the item table
+ALTER TABLE public.item
+ADD COLUMN descriptions text;
+
+-- Populate the descriptions column with sample data
+UPDATE public.item
+SET descriptions = CASE
+    WHEN item_id = 47 THEN 'Fresh whole milk, 1L carton'
+    WHEN item_id = 23 THEN 'Free-range eggs, dozen pack'
+    WHEN item_id = 19 THEN 'Whole grain bread, 500g'
+    WHEN item_id = 22 THEN 'Smooth milk chocolate bar, 100g'
+    ELSE 'No description available'
+END;
