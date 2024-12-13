@@ -518,18 +518,30 @@ def user_is_host():
     order_id = request.args.get('order_id')
     user_id = request.args.get('user_id')
     if not order_id or not user_id:
-        return {'error': 'Please provide the required details'}, 400
-    
-    print(request.args)
+        return jsonify({'error': 'Please provide the required details'}), 400
 
-    return jsonify({
-        "isHost": True
-    }), 200
-    # TODO - Implement the logic to check if the user is the host of the order
-    #result = db.engine.execute("SELECT * FROM your_table")
-    #rows = [dict(row) for row in result]
-    #return {'data': rows}
-    #return true or false 
+    try:
+        with db.engine.connect() as connection:
+            # Query to check if the user is the host of the order
+            query = text("""
+                SELECT host_email
+                FROM public.shared_order
+                WHERE order_id = :order_id
+            """)
+            result = connection.execute(query, {"order_id": order_id}).fetchone()
+
+            if not result:
+                return jsonify({'error': 'Order not found'}), 404
+
+            is_host = result.host_email == user_id
+
+        return jsonify({
+            "isHost": is_host
+        }), 200
+
+    except Exception as e:
+        print(f"Error checking if user is host: {e}")
+        return jsonify({'error': 'An error occurred while checking host status'}), 500
 
 ## GET USER BASKET ENDPOINT
 ## This endpoint will take in the following parameters:
